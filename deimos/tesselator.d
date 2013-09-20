@@ -32,6 +32,7 @@ module deimos.tesselator;
 */
 
 extern(C):
+nothrow:
 
 enum TessWindingRule
 {
