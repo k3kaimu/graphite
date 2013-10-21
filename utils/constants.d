@@ -230,7 +230,7 @@ enum TargetPlatform
 #endif
 */
 
-import deimos.tesselator;
+import graphite.deimos.tesselator;
 alias TESSindex IndexType;
 
 /*
