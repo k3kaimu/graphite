@@ -205,37 +205,37 @@ videoとsoundもSDLで乗り切れるよね？
         ofPoint, ofConstants, ofUtils, ofAppRunner, float, ofNoise, ofPolyline
 
 
-    - ofMatrix3x3
+    - ofMatrix3x3 [攻略済み]
 
         ofConstants, 
 
 
-    - ofMatrix4x4
+    - ofMatrix4x4 [攻略済み]
 
         ofVec3f, ofVec4f, ofQuaternion, ofConstants, 
 
 
     - ofQuaternion
 
-        ofConstants, ofVec3f, ofVec4f, ofQuaternion, ofMatrix4x4, ofMath
+        ofConstants, ofVec3f, ofVec4f, ofMatrix4x4, ofMath
 
 
-    - ofVec2f
+    - ofVec2f [攻略済み]
 
         ofConstants, ofVec3f, ofVec4f
 
 
-    - ofVec3f
+    - ofVec3f [攻略済み]
 
         ofVec2f, ofVec4f, ofConstants
 
 
-    - ofVec4f
+    - ofVec4f [攻略済み]
 
         ofConstants, ofVec2f, ofVec3f
 
 
-    - ofVectorMatrix
+    - ofVectorMatrix [攻略済み]
 
         ofVec2f, ofVec3f, ofVec4f, ofMatrix3x3, ofMatrix4x4, ofQuaternion
 
@@ -336,7 +336,7 @@ videoとsoundもSDLで乗り切れるよね？
         Poco/Any, ofConstants, ofLog, ofParameter, ofUtils
 
 
-    - ofPoint
+    - ofPoint [攻略済み]
 
         ofVec3f
 
@@ -353,7 +353,7 @@ videoとsoundもSDLで乗り切れるよね？
 
 + utils
 
-    - ofConstants
+    - ofConstants [攻略済み]
 
         (null)
 
@@ -373,7 +373,7 @@ videoとsoundもSDLで乗り切れるよね？
         ofConstants, ofRectangle, ofGraphics, ofMatrix4x4, ofMatrixStack, ofAppBaseWindow, ofFbo
 
 
-    - ofNoise
+    - ofNoise [攻略済み]
 
         (null)
 
