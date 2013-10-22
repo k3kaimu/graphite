@@ -1,5 +1,8 @@
 module graphite.utils.noise;
 
+pure:
+nothrow:
+@safe:
 
 /*
  * Mesa 3-D graphics library
@@ -51,7 +54,7 @@ module graphite.utils.noise;
  * header file. The header file is made for use by external code only.
  */
 
-int FASTFLOOR(T)(T x){ return (x > 0) ? (cast(int)x) : ((cast(int)x)-1); }
+int FASTFLOOR(T)(T x) { return (x > 0) ? (cast(int)x) : ((cast(int)x)-1); }
 
 /*
  * ---------------------------------------------------------------------
@@ -120,28 +123,28 @@ immutable ubyte[512] perm = [151,160,137,91,90,15,
  * float SLnoise = (SimplexNoise1234::noise(x,y,z) + 1.0) * 0.5;
  */
 
-static float  grad1( int hash, float x ) {
+float  grad1( int hash, float x ) {
     int h = hash & 15;
     float grad = 1.0f + (h & 7);   /* Gradient value 1.0, 2.0, ..., 8.0 */
     if (h&8) grad = -grad;         /* Set a random sign for the gradient */
     return ( grad * x );           /* Multiply the gradient with the distance */
 }
 
-static float  grad2( int hash, float x, float y ) {
+float  grad2( int hash, float x, float y ) {
     int h = hash & 7;      /* Convert low 3 bits of hash code */
     float u = h<4 ? x : y;  /* into 8 simple gradient directions, */
     float v = h<4 ? y : x;  /* and compute the dot product with (x,y). */
     return ((h&1)? -u : u) + ((h&2)? -2.0f*v : 2.0f*v);
 }
 
-static float  grad3( int hash, float x, float y , float z ) {
+float  grad3( int hash, float x, float y , float z ) {
     int h = hash & 15;     /* Convert low 4 bits of hash code into 12 simple */
     float u = h<8 ? x : y; /* gradient directions, and compute dot product. */
     float v = h<4 ? y : h==12||h==14 ? x : z; /* Fix repeats at h = 12 to 15 */
     return ((h&1)? -u : u) + ((h&2)? -v : v);
 }
 
-static float  grad4( int hash, float x, float y, float z, float t ) {
+float  grad4( int hash, float x, float y, float z, float t ) {
     int h = hash & 31;      /* Convert low 5 bits of hash code into 32 simple */
     float u = h<24 ? x : y; /* gradient directions, and compute dot product. */
     float v = h<16 ? y : z;
@@ -163,7 +166,7 @@ static float  grad4( int hash, float x, float y, float z, float t ) {
     [2,1,0,3],[0,0,0,0],[0,0,0,0],[0,0,0,0],[3,1,0,2],[0,0,0,0],[3,2,0,1],[3,2,1,0]];
 
 /* 1D simplex noise */
-static float _slang_library_noise1 (float x)
+float _slang_library_noise1 (float x)
 {
   int i0 = FASTFLOOR(x);
   int i1 = i0 + 1;
@@ -187,7 +190,7 @@ static float _slang_library_noise1 (float x)
 }
 
 /* 2D simplex noise */
-static float _slang_library_noise2 (float x, float y)
+float _slang_library_noise2 (float x, float y)
 {
     immutable F2 = 0.366025403f; /* F2 = 0.5*(sqrt(3.0)-1.0) */
     immutable G2 = 0.211324865f; /* G2 = (3.0-Math.sqrt(3.0))/6.0 */
@@ -258,7 +261,7 @@ static float _slang_library_noise2 (float x, float y)
 }
 
 /* 3D simplex noise */
-static float _slang_library_noise3 (float x, float y, float z)
+float _slang_library_noise3 (float x, float y, float z)
 {
 /* Simple skewing factors for the 3D case */
     immutable F3 = 0.333333333f;
@@ -360,7 +363,7 @@ static float _slang_library_noise3 (float x, float y, float z)
 }
 
 /* 4D simplex noise */
-static float _slang_library_noise4 (float x, float y, float z, float w)
+float _slang_library_noise4 (float x, float y, float z, float w)
 {
   /* The skewing and unskewing factors are hairy again for the 4D case */
     immutable F4 = 0.309016994f; /* F4 = (Math.sqrt(5.0)-1.0)/4.0 */
