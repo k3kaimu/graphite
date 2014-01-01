@@ -116,10 +116,7 @@ struct Logger
     }
 
     string _id;
-
-    
     OutputRange!dchar _orng;
-    
     Level _currLv;
 }
 
@@ -129,7 +126,8 @@ private Logger[] loggers;
 
 static this()
 {
-    loggers ~= Logger("Global");
+    loggers ~= Logger("Global", null, Logger.Level.warning);
+    loggers[0].bind(stdout.lockingTextWriter);
 }
 
 
@@ -210,4 +208,24 @@ unittest
 
     logger!(graphite.utils.log).write!("fatalError", "f", 2, "p")("hoge");
     assert(app.data == "[warning]<log>{file(0): func}: foo[fatalError]<log>{f(2): p}: hoge");
+
+    logger!(graphite.utils.log).write!"warning"("foo");
+    writeln(app.data);
+}
+
+unittest
+{
+    // 使い方
+    // まず、適当なOutputRangeをバインドする
+    // isOutputRange!(R, dchar)を満たす型であればなんでも良い
+    auto app = appender!string();   // 今回は便利なappender!string
+    logger!"logTest".bind(app);     // std.stdio.stdoutでももちろん良い
+
+    // logger!(identifier)のデフォルトの設定は、グローバル変数のloggers[0]から受け継がれる
+    // 今回はlevelをnoticeにしてみる。
+    logger!"logTest".currLevel = Logger.Level.notice;
+
+    // ログに出力してみる
+    logger!"logTest".writeln!"warning"("まじかよ…");        // こんな感じで使う
+    logger!"unittest".writefln!"verbose"("{%s}", app.data); // 例えばこんな感じ
 }
