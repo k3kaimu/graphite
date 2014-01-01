@@ -208,13 +208,12 @@ unittest
 
     logger!(graphite.utils.log).write!("fatalError", "f", 2, "p")("hoge");
     assert(app.data == "[warning]<log>{file(0): func}: foo[fatalError]<log>{f(2): p}: hoge");
-
-    logger!(graphite.utils.log).write!"warning"("foo");
-    writeln(app.data);
 }
 
 unittest
 {
+    import std.array;
+
     // 使い方
     // まず、適当なOutputRangeをバインドする
     // isOutputRange!(R, dchar)を満たす型であればなんでも良い
