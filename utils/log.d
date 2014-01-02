@@ -73,13 +73,13 @@ struct Logger
     }
 
 
-    Level currLevel() @property
+    Level thrLv() @property
     {
         return _currLv;
     }
 
 
-    void currLevel(Level level) @property
+    void thrLv(Level level) @property
     {
         this._currLv = level;
     }
@@ -155,10 +155,10 @@ auto allLogger() @property
 {
     struct AllLogger
     {
-        void currLevel(Logger.Level lv)
+        void thrLv(Logger.Level lv)
         {
             foreach(ref e; loggers)
-                e.currLevel = lv;
+                e.thrLv = lv;
         }
 
 
@@ -198,7 +198,7 @@ unittest
 
     auto app = appender!string();
     logger!(graphite.utils.log).bind(app);
-    logger!(graphite.utils.log).currLevel = Logger.Level.warning;
+    logger!(graphite.utils.log).thrLv = Logger.Level.warning;
 
     logger!(graphite.utils.log).write!("warning", "file", 0, "func")("foo");
     assert(app.data == `[warning]<log>{file(0): func}: foo`);
@@ -222,7 +222,7 @@ unittest
 
     // logger!(identifier)のデフォルトの設定は、グローバル変数のloggers[0]から受け継がれる
     // 今回はlevelをnoticeにしてみる。
-    logger!"logTest".currLevel = Logger.Level.notice;
+    logger!"logTest".thrLv = Logger.Level.notice;
 
     // ログに出力してみる
     logger!"logTest".writeln!"warning"("まじかよ…");        // こんな感じで使う
