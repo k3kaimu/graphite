@@ -126,8 +126,11 @@ private Logger[] loggers;
 
 static this()
 {
-    loggers ~= Logger("Global", null, Logger.Level.warning);
-    loggers[0].bind(stdout.lockingTextWriter);
+    loggers ~= Logger("Global", null, Logger.Level.verbose);
+    loggers[0].bindConsole;
+
+    logger!"unittest".bindConsole();
+    logger!"unittest".thrLv = Logger.Level.warning;
 }
 
 
@@ -215,7 +218,9 @@ unittest
     import std.array;
 
     // 使い方
-    // まず、適当なOutputRangeをバインドする
+    // logger!identifier()のデフォルト設定は、logger()から引き継がれる
+
+    // 出力先を変更したい場合は、適当なOutputRangeをバインドする
     // isOutputRange!(R, dchar)を満たす型であればなんでも良い
     auto app = appender!string();   // 今回は便利なappender!string
     logger!"logTest".bind(app);     // std.stdio.stdoutでももちろん良い
