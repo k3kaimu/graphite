@@ -16,15 +16,6 @@ public import graphite.math.matrix,
               graphite.math.quaternion;
 
 
-alias Matrix3x3 = SMatrix!(float, 3, 3);
-alias Matrix4x4 = SMatrix!(float, 4, 4);
-alias Vec2f = SMatrix!(float, 2, 1);
-alias Vec3f = SMatrix!(float, 3, 1);
-alias Vec4f = SMatrix!(float, 4, 1);
-
-alias Quat = Quaternion!float;
-
-
 /**
 nextが1である場合に、next2Pow(num)はnumより大きく、かつ、最小の2の累乗数を返します。
 
