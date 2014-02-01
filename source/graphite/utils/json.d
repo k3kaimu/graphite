@@ -181,7 +181,7 @@ template JSONEnv(alias overloads)
         dst.type = JSON_TYPE.OBJECT;
         dst.object = null;
 
-        foreach(k, v; value){
+        foreach(k, v; aa){
             static if(is(typeof(k) : string))
                 dst.object[k] = toJSONValue(v);
             else
@@ -247,8 +247,16 @@ template JSONEnv(alias overloads)
     void fromJSONValueImpl(T)(JSONValue json, ref T dst)
     if(isFloatingPoint!T)
     {
-        enforceEx!JSONException(json.type == JSON_TYPE.FLOAT, createFromJSONValueExceptionMsg!T(json));
-        dst = json.floating;
+        enforceEx!JSONException(json.type == JSON_TYPE.FLOAT
+                             || json.type == JSON_TYPE.INTEGER
+                             || json.type == JSON_TYPE.UINTEGER, createFromJSONValueExceptionMsg!T(json));
+        
+        if(json.type == JSON_TYPE.FLOAT)
+            dst = json.floating;
+        else if(json.type == JSON_TYPE.INTEGER)
+            dst = json.integer;
+        else
+            dst = json.uinteger;
     }
 
 
@@ -303,6 +311,9 @@ template JSONEnv(alias overloads)
 }
 
 
+/**
+任意のユーザー定義型をJSONでのObjectに変換する際に便利なテンプレート
+*/
 mixin template JSONObject(fields...)
 if(fields.length && fields.length % 2 == 0)
 {
@@ -318,7 +329,7 @@ if(fields.length && fields.length % 2 == 0)
             {
                 static assert(is(typeof(fields[i]) == string));
 
-                static if(is(typeof({jv.object[fields[i]] = toJSONValue(mixin(fields[i+1]));})))
+                static if(is(typeof(mixin(fields[i+1]))))
                     jv.object[fields[i]] = toJSONValue(mixin(fields[i+1]));
                 else
                     jv.object[fields[i]] = toJSONValue(fields[i+1]);
@@ -339,8 +350,11 @@ if(fields.length && fields.length % 2 == 0)
                     fromJSONValue(jv.object[fields[i]], fields[i+1]());
                 else static if(is(typeof(&(fields[i+1])) == U*, U))
                     fromJSONValue(jv.object[fields[i]], fields[i+1]);
-                else static if(is(typeof(&(mixin(fields[i+1]))) == U*, U))
+                else static if(is(typeof(&(mixin(fields[i+1]))) == U*, U) &&
+                               !is(typeof(&(mixin(fields[i+1]))) == V function(W), V, W...))
+                {
                     fromJSONValue(jv.object[fields[i]], mixin(fields[i+1]));
+                }
                 else
                 {
                     static if(is(typeof(fields[i+1]())))    // property
@@ -375,10 +389,10 @@ if(fields.length && fields.length % 2 == 0)
 }
 
 
+///
 unittest{
-    import std.stdio;
-
-
+    // Custom JSON Convertor
+    // ユーザーは、任意の型をJSONへ変換するための変換器を定義できる
     static struct CustomJSONConvertor
     {
         static { mixin JSONEnv!null _dummy; }
@@ -397,35 +411,58 @@ unittest{
     }
 
 
+    // グローバルなsetterとgetterだと仮定
+    static struct Foo
+    {
+        int gloF() @property { return _gloF; }
+        void gloF(int a) @property { _gloF = a; }
+
+        static int _gloF = 12345;
+    }
+
+
+    // グローバル変数だと仮定
+    static string gloG = "global variable";
+
+
+    // JSONへ変換したり、JSONから変換する対象のオブジェクト
     static struct S1
     {
+        // JSON Convertorの定義
+        // 通常はモジュールで定義すればよい
         static {
             mixin JSONEnv!CustomJSONConvertor;
         }
 
 
+        // refで返すプロパティ
         ref real flt() @property
         {
             return _flt;
         }
 
 
+        // getter
         int[] arr() @property
         {
             return _arr;
         }
 
-
+        // setter
         void arr(int[] arr) @property
         {
             _arr = arr;
         }
 
 
-        mixin JSONObject!("intA", a,
-                          "strB", "b",
-                          "fltC", flt,          // property
-                          "arrD", "arr",        // property
+        // JSONでのオブジェクトの定義
+        mixin JSONObject!("intA", a,                // メンバ変数
+                          "strB", "b",              // メンバ変数(文字列)
+                          "fltC", flt,              // refを返すメンバ関数(プロパティ)
+                          "arrD", "arr",            // setter, getter
+                          "aasE", "aas",            // static setter, getter
+                          "gloF", "Foo.init.gloF",  // global setter, getter
+                          "gloG", gloG,             // グローバル変数など外部スコープの変数
                           );
 
 
@@ -434,13 +471,34 @@ unittest{
         string b;
         real _flt;
         int[] _arr;
+
+
+      static:
+
+        // staticなgetter
+        int[int] aas() @property
+        {
+            return [1 : 2, 2 : 3, 3 : 4, 4 : 5];
+        }
+
+
+        // staticなsetter
+        void aas(int[int] aa) @property
+        {}
     }
 
     auto s1 = S1(12, "foo", 2.0, [1, 2, 3, 4]);
     auto jv = S1.toJSONValue(s1);
-    auto str = toJSON(&jv);
-    writeln(str);               // {"strB":"Custom Convertor-String : foo","fltC":2,"intA":12,"arrD":[1,2,3,4]}
+
+    auto jvtext = parseJSON(`{"gloF":12345,"strB":"Custom Convertor-String : foo","fltC":2,"gloG":"Custom Convertor-String : global variable","intA":12,"aasE":{"4":5,"1":2,"2":3,"3":4},"arrD":[1,2,3,4]}`);
+    assert(toJSON(&jv) == toJSON(&jvtext));
 
     auto s2 = S1.fromJSONValueImpl(jv);
-    writeln(s2);                // S1(12, "foo", 2, [1, 2, 3, 4])
+    auto s3 = S1.fromJSONValueImpl(jvtext);
+
+    assert(s1 == s2);
+    assert(s2 == s3);
+
+    assert(Foo.init.gloF == 12345);
+    assert(gloG == "global variable");
 }
