@@ -1,0 +1,13 @@
+{
+	"name": "graphite",
+	"description": "Matrix, Graphic, Twitter Library for D.",
+	"authors": ["Kazuki Komatsu"],
+    "homepase": "https://github.com/k3kaimu/graphite",
+    "license": "NYSL",
+    "copyright": "Copyright © 2014, Kazuki Komatsu",
+
+    "importPaths": ["src"],
+    "targetType": "library",
+	"dependencies": {
+	}
+}

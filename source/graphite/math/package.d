@@ -13,7 +13,8 @@ import graphite.types.point;
 
 
 public import graphite.math.matrix,
-              graphite.math.quaternion;
+              graphite.math.quaternion,
+              graphite.math.saturation;
 
 
 /**
