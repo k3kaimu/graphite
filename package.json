@@ -6,7 +6,7 @@
     "license": "NYSL",
     "copyright": "Copyright © 2014, Kazuki Komatsu",
 
-    "importPaths": ["src"],
+    "importPaths": ["source"],
     "targetType": "library",
 	"dependencies": {
 	}
