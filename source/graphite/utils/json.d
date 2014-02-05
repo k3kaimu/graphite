@@ -201,6 +201,14 @@ template JSONEnv(alias overloads)
 
     ///
     void fromJSONValueImpl(T)(JSONValue json, ref T dst)
+    if(is(T == typeof(null)))
+    {
+        enforceEx!JSONException(json.type == JSON_TYPE.NULL, createFromJSONValueExceptionMsg!T(json));
+    }
+
+
+    ///
+    void fromJSONValueImpl(T)(JSONValue json, ref T dst)
     if(is(T == string))
     {
         enforceEx!JSONException(json.type == JSON_TYPE.STRING, createFromJSONValueExceptionMsg!T(json));
