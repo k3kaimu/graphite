@@ -2,7 +2,7 @@
 /**
 任意の構造体やクラスをJSONに変換したり、その逆変換を行う
 */
-//module graphite.utils.json;
+module graphite.utils.json;
 
 import std.algorithm;
 import std.array;
@@ -509,4 +509,95 @@ unittest{
 
     assert(Foo.init.gloF == 12345);
     assert(gloG == "global variable");
+}
+
+
+/**
+JSON Objectを構築します
+*/
+struct JSONObjectType(alias jsonEnv, fields...)
+if(fields.length && isValidJSONObjectTypeFields!fields)
+{
+    static {
+        mixin JSONEnv!jsonEnv;
+    }
+
+    mixin(genStructField);
+    mixin(`mixin JSONObject!(` ~ genMixinFields ~ `);`);
+
+  private:
+  static:
+    string genStructField()
+    {
+        string dst;
+
+        foreach(i; _StaticIota!(0, fields.length))
+        {
+            static if(i % 2 == 0)
+            {
+                dst ~= fields[i].stringof;  // type
+                dst ~= " ";
+                dst ~= fields[i+1];         // identifier
+                dst ~= ";\n";
+            }
+        }
+
+        return dst;
+    }
+
+
+    string genMixinFields()
+    {
+        string dst;
+
+        foreach(i; _StaticIota!(0, fields.length))
+        {
+            static if(i % 2 == 0)
+            {
+                dst ~= `"` ~ fields[i+1] ~ `",`;     // tag
+                dst ~= `"` ~ fields[i+1] ~ `",`;     // identifier
+            }
+        }
+
+        return dst;
+    }
+}
+
+
+unittest{
+    JSONObjectType!(null,
+                    int,        "intA",
+                    string,     "strB",
+                    float,      "fltC") jot;
+
+    jot.intA = 12;
+    jot.strB = "foo-bar";
+    jot.fltC = 12.5;
+
+    auto x = jot.toJSONValueImpl();
+    auto y = parseJSON(`{"strB":"foo-bar","fltC":12.5,"intA":12}`);
+    assert(toJSON(&x) == toJSON(&y));
+
+    assert(typeof(jot).fromJSONValueImpl(x) == jot);
+    assert(typeof(jot).fromJSONValueImpl(y) == jot);
+}
+
+
+private
+template isValidJSONObjectTypeFields(fields...)
+{
+    //template isValidImpl(T, string name) { enum isValidImpl = true; }
+    enum isValidImpl_(T, string name) = name.length;
+    enum isValidImpl(X...) = is(typeof({static assert(isValidImpl_!X);}));
+
+    static if(fields.length)
+    {
+        static if(fields.length % 2 == 0)
+            enum isValidJSONObjectTypeFields = isValidImpl!(fields[0 .. 2])
+                                            && isValidJSONObjectTypeFields!(fields[2 .. $]);
+        else
+            enum isValidJSONObjectTypeFields = false;
+    }
+    else
+        enum isValidJSONObjectTypeFields = true;
 }
