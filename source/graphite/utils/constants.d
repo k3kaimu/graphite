@@ -12,6 +12,22 @@ immutable GRAPHITE_VERSION_MINOR = 8;       /// ditto
 immutable GRAPHITE_VERSION_PATCH = 0;       /// ditto
 
 
+template isVersion(string vs)
+{
+    enum isVersion = (){
+        mixin(`version(` ~ vs ~ `) return true; else return false;`);
+    }();
+}
+
+
+template isDebug(string vs)
+{
+    enum isDebug = (){
+        mixin(`debug(` ~ vs ~ `) return true; return false;`);
+    }();
+}
+
+
 /// enum ofLoopType
 enum LoopType
 {
