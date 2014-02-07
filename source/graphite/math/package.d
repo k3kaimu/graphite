@@ -10,11 +10,27 @@ import std.functional;
 
 import graphite.utils.noise;
 import graphite.types.point;
+import graphite.utils.log;
+import graphite.graphics.polyline : polyline, isInside;
 
 
-public import graphite.math.matrix,
+public import graphite.math.linear,
               graphite.math.quaternion,
               graphite.math.saturation;
+
+/**
+ * ベクトル型
+ */
+alias Vec2f = SMatrix!(float, 2, 1);
+alias Vec3f = SMatrix!(float, 3, 1);	/// ditto
+alias Vec4f = SMatrix!(float, 4, 1);	/// ditto
+
+/**
+ * 行列型
+ */
+alias Matrix2x2f = SMatrix!(float, 2, 2);
+alias Matrix3x3f = SMatrix!(float, 3, 3);	/// ditto
+alias Matrix4x4f = SMatrix!(float, 4, 4);	/// ditto
 
 
 /**
@@ -69,7 +85,7 @@ real normalize(real value, real min, real max) pure nothrow @safe
 real lerp(real value, real[2] input, real[2] output) pure nothrow @safe
 {
     if((input[0] - input[1]).approxEqual(0)){
-        debug logger!(graphite.math).writefln!"warning"("avoiding possible divide by zero, check input[0](%s) and input[0](%s)", inputMin, inputMax);
+        //debug logger.writefln!"warning"("avoiding possible divide by zero, check input[0](%s) and input[0](%s)", inputMin, inputMax);
         return value - input[0] < value - input[1] ? output[0] : output[1];
     }else
         return (output[1] - output[0]) / (input[1] - input[0]) * (value - input[0]) + output[0];
@@ -193,17 +209,18 @@ if(N >= 1 && N <= 4)
 
 bool isInsidePoly(real x, real y, in Point[] polygon)
 {
-    return polyline(polygon).isContain(x, y);
+    return isInsidePoly(Point(x, y), polygon);
 }
 
 
 bool isInsidePoly(Point p, in Point[] polygon)
 {
-    return polyline(polygon).isContain(p);
+    //return polyline(polygon).isContain(p);
+    return p.isInside(polyline(polygon));
 }
 
 
-bool lineSegmentIntersection(Point line1Start, Point line1End, Point line2Start, Point line2End, out Point intersection)
+bool lineSegmentIntersection(in Point line1Start, in Point line1End, in Point line2Start, in Point line2End, out Point intersection)
 {
     auto diffLA = line1End - line1Start,
          diffLB = line2End - line2Start;
@@ -216,7 +233,7 @@ bool lineSegmentIntersection(Point line1Start, Point line1End, Point line2Start,
     if(((xymyx(diffLA, line2Start) < cmpA) ^ (xymyx(diffLA, line2End) < cmpA))
      && ((xymyx(diffLB, line1Start) < cmpB) ^ (xymyx(diffLB, line1End) < cmpB)))
     {
-        intersection = (diffLB * cmpA - diffLA * cmpB) * -1 / xymyx(diffLA, diffLB);
+        intersection.vec = (diffLB * cmpA - diffLA * cmpB) * -1 / xymyx(diffLA, diffLB);
         return true;
     }
 
