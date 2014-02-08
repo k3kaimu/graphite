@@ -10,15 +10,32 @@ import graphite.math;
 
 struct Color(PixelType = ubyte)
 {
+    /// 各カラーへのアクセス
     ref inout(PixelType) r() inout @property { return _v[0]; }
-    ref inout(PixelType) g() inout @property { return _v[1]; }
-    ref inout(PixelType) b() inout @property { return _v[2]; }
-    ref inout(PixelType) a() inout @property { return _v[3]; }
+    ref inout(PixelType) g() inout @property { return _v[1]; }  /// ditto
+    ref inout(PixelType) b() inout @property { return _v[2]; }  /// ditto
+    ref inout(PixelType) a() inout @property { return _v[3]; }  /// ditto
 
+    /**
+    カラーには、浮動小数点型の値を代入可能
+    */
+  static if(!isFloatingPoint!PixelType)
+  {
     void r(real r) @property { this.r = toPixelType(r); }
-    void g(real g) @property { this.g = toPixelType(g); }
-    void b(real b) @property { this.b = toPixelType(b); }
-    void a(real a) @property { this.a = toPixelType(a); }
+    void g(real g) @property { this.g = toPixelType(g); }       /// ditto
+    void b(real b) @property { this.b = toPixelType(b); }       /// ditto
+    void a(real a) @property { this.a = toPixelType(a); }       /// ditto
+
+    unittest{
+        Color!PixelType c;
+        c.r = 1.0;
+        assert(c.r == Color!PixelType.limit!PixelType);
+
+        c.r = 0.0;
+        assert(c.r == 0);
+    }
+  }
+
 
     /**
     r: 0 ~ 1
