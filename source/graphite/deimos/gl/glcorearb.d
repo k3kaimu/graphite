@@ -48,7 +48,7 @@
  
  /* Function declaration macros - to move into glplatform.h */
  
- module glcorearb;
+ module graphite.deimos.gl.glcorearb;
 
 public:
 	extern(C):

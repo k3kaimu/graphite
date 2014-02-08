@@ -1,4 +1,4 @@
-module deimos.tesselator;
+module graphite.deimos.tesselator;
 
 /*
 ** SGI FREE SOFTWARE LICENSE B (Version 2.0, Sept. 18, 2008) 

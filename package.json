@@ -8,6 +8,8 @@
 
     "importPaths": ["source"],
     "targetType": "library",
+    "sourceFiles-windows-x86-dmd": ["lib/win32/glfw3dll_omf.lib"],
+    "sourceFiles-windows-x86_64-dmd": ["lib/win64/glfw3dll.lib"],
 	"dependencies": {
 	}
 }

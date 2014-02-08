@@ -1,4 +1,4 @@
-module deimos.glfw.glfw3;
+module graphite.deimos.glfw.glfw3;
 /*************************************************************************
  * GLFW - An OpenGL library
  * API version: 3.0
