@@ -344,7 +344,7 @@ unittest{
 /**
 ベクトルを、行列ベクトル型へ変換します
 */
-auto toMatrixVector(Major major = defaultMajor, V)(V v)
+auto toNarrowVector(Major major = defaultMajor, V)(V v)
 if(isVector!V && !isNarrowVector!V)
 {
     static struct Result()
@@ -3043,7 +3043,7 @@ if(rs != 0 && cs != 0)
     if(!isNarrowMatrix!Array && isAssignable!(T, typeof(arr[size_t.init])))
     {
         foreach(i; 0 .. this.length)
-            this[i] = arr[i];
+            _array[i] = arr[i];
     }
   }
 
