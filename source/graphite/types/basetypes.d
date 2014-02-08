@@ -1,407 +1,663 @@
-module graphite.types.basetypes;
-
 /*
- *  ofBaseTypes.h
+ *  BaseTypes.h
  *  openFrameworksLib
  *
  *  Created by zachary lieberman on 1/9/11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
  *
  */
+module graphite.types.basetypes;
 
 
-
-import graphite.utils.constant,
+import graphite.utils.constants,
        graphite.r3.mesh,
        graphite.graphics.pixels,
+       graphite.graphics.polyline,
+       graphite.gl,
        graphite.math,
-       graphite.types;
+       graphite.types,
+       graphite.utils.log,
+       graphite.types.types,
+       graphite.utils.typeclass;
 
 
-//class ofAbstractParameter;
+import std.traits;
+
+
+//class AbstractParameter;
 
 //template<typename T>
-//class ofImage_;
+//class Image_;
 
-//typedef ofImage_<unsigned char> ofImage;
-//typedef ofImage_<float> ofFloatImage;
-//typedef ofImage_<unsigned short> ofShortImage;
+//typedef Image_<unsigned char> Image;
+//typedef Image_<float> FloatImage;
+//typedef Image_<unsigned short> ShortImage;
 
-//class ofPath;
-//class ofPolyline;
-//class ofFbo;
-//class of3dPrimitive;
-//typedef ofPixels& ofPixelsRef;
+//class Path;
+////class Polyline;
+//class Fbo;
+//class R3Primitive;
+//class Mesh;
+//class PolyRenderMode;
+//class Image;
+//class FloatImage;
+//class ShortImage;
+////typedef Pixels& PixelsRef;
 
-//bool ofIsVFlipped();
+//bool IsVFlipped();
 
 
 //----------------------------------------------------------
-// ofBaseDraws
+// BaseDraws
 //----------------------------------------------------------
 
-abstract class IDraws{
-    //virtual ~ofBaseDraws(){}
+
+interface IDrawable
+{
     void draw(float x, float y);
     void draw(float x, float y, float w, float h);
-    void draw(in Point point) {
-        draw(point.x, point.y);
-    }
-    void draw(in Rectangle rect) {
-        draw(rect.x, rect.y, rect.width, rect.height);
-    }
-    void draw(in Point point, float w, float h) {
-        draw(point.x, point.y, w, h);
-    }
-    
-    float getHeight();
-    float getWidth();
-    
-    void setAnchorPercent(float xPct, float yPct){};
-    void setAnchorPoint(float x, float y){};
-    void resetAnchor(){};
+    mixin(declOptionalMethod("void", "draw", ["in Point"]));
+    mixin(declOptionalMethod("void", "draw", ["in Rectangle"]));
+    mixin(declOptionalMethod("void", "draw", ["in Point", "float", "float"]));
+
+    float height();
+    float width();
+
+    mixin(declOptionalMethod("void", "setAnchorPercent", ["float", "float"]));
+    mixin(declOptionalMethod("void", "setAnchorPoint", ["float", "float"]));
+    mixin(declOptionalMethod("void", "resetAnchor", []));
 }
 
-//----------------------------------------------------------
-// ofBaseUpdates
-//----------------------------------------------------------
 
-interface class BaseUpdates{
-    //virtual ~ofBaseUpdates(){}
+enum isDrawable(T) = isMemberOfTypeClass!(T, IDrawable);
+
+unittest{
+    static assert(isDrawable!IDrawable);
+}
+
+
+void draw(T)(auto ref T t, in Point p)
+if(isDrawable!T)
+{
+    t.callOptional!("draw", (ref t, p){
+        t.draw(p.x, p.y);
+    })(p);
+}
+
+
+void draw(T)(auto ref T t, in Rectangle r)
+if(isDrawable!T)
+{
+    t.callOptional!("draw", (ref t, r){
+        t.draw(r.x, r.y, r.width, r.height);
+    })(r);
+}
+
+
+void draw(T)(auto ref T t, in Point p, float w, float h)
+if(isDrawable!T)
+{
+    t.callOptional!("draw", (ref t, p, w, h){
+        t.draw(p.x, p.y, w, h);
+    })(p, w, h);
+}
+
+
+void setAnchorPercent(T)(auto ref T t, float xPct, float yPct)
+if(isDrawable!T)
+{
+    t.callOptional!("setAnchorPercent", (ref t, xPct, yPct){
+        logger.writeln!"warning"("not implemented 'setAnchorPercent'");
+    })(xPct, yPct);
+}
+
+
+void setAnchorPoint(T)(auto ref T t, float y, float y)
+if(isDrawable!T)
+{
+    t.callOptional!("setAnchorPercent", (ref t, x, y){
+        logger.writeln!"warning"("not implemented 'setAnchorPoint'");
+    })(xPct, yPct);
+}
+
+
+void resetAnchor(T)(auto ref T t)
+if(isDrawable!T)
+{
+    t.callOptional!("resetAnchor", (ref t){
+        logger.writeln!"warning"("not implemented 'resetAnchor'");
+    })();
+}
+
+
+//----------------------------------------------------------
+// BaseUpdates
+//----------------------------------------------------------
+interface IUpdatable
+{
     void update();
 }
 
+enum isUpdatable(T) = isMemberOfTypeClass!(T, IUpdatable);
 
-//----------------------------------------------------------
-// ofBaseHasTexture
-//----------------------------------------------------------
-//class ofTexture;
-
-interface BaseHasTexture{
-    //~ofBaseHasTexture(){}
-    ref Texture getTextureReference();
-    void setUseTexture(bool bUseTex);
+unittest{
+    static assert(isUpdatable!IUpdatable);
 }
 
-//----------------------------------------------------------
-// ofAbstractHasPixels
-//----------------------------------------------------------
-interface AbstractHasPixels{
-    //virtual ~ofAbstractHasPixels(){}
-}
 
 //----------------------------------------------------------
-// ofBaseHasPixels
+// BaseHasTexture
+//----------------------------------------------------------
+//class Texture;
+
+interface IHasTexture
+{
+    ref Texture texture();
+    void useTexture(bool bUseTex) @property;
+}
+
+
+enum hasTexture(T) = isMemberOfTypeClass!(T, IHasTexture);
+
+unittest{
+    static assert(hasTexture!IHasTexture);
+}
+
+
+//----------------------------------------------------------
+// AbstractHasPixels
+//----------------------------------------------------------
+//interface AbstractHasPixels{
+    //virtual ~AbstractHasPixels(){}
+//}
+
+enum hasAnyPixels(T) = is(typeof((T t){
+        static void takePixelsRef(U)(ref Pixels!U){}
+        takePixelsRef(t.pixels);
+    }));
+
+//----------------------------------------------------------
+// BaseHasPixels
 //----------------------------------------------------------
 //template<typename T>
-interface BaseHasPixels_(T) : AbstractHasPixels{
-    //~ofBaseHasPixels_<T>(){}
-    T * getPixels();
-    ref ofPixels_!T getPixelsRef();
+interface IHasPixels(T)
+{
+    ref Pixels!T pixels();
 }
 
-alias BaseHasPixels_!ubyte BaseHasPixels;
-alias BaseHasPixels_!float BaseHasFloatPixels;
-alias BaseHasPixels_!ushort BaseHasShortPixels;
 
-//----------------------------------------------------------
-// ofAbstractImage    ->   to be able to put different types of images in vectors...
-//----------------------------------------------------------
-interface AbstractImage : BaseDraws, BaseHasTexture {
-    //virtual ~ofAbstractImage(){}
+enum hasPixels(T, E) = isMemberOfTypeClass!(T, IHasPixels!E);
+
+unittest{
+    static assert(hasPixels!(IHasPixels!ubyte, ubyte));
+    static assert(hasPixels!(IHasPixels!ushort, ushort));
+    static assert(hasPixels!(IHasPixels!float, float));
 }
 
+
+auto pixelsPtr(T)(auto ref T t)
+if(hasPixels!T)
+{
+    return t.pixels.pixels;
+}
+
+enum hasPixels(T) = hasPixels!(T, ubyte);
+enum hasFloatPixels(T) = hasPixels!(T, float);
+enum hasShortPixels(T) = hasPixels!(T, ushort);
+
+//alias BaseHasPixels_!ubyte BaseHasPixels;
+//alias BaseHasPixels_!float BaseHasFloatPixels;
+//alias BaseHasPixels_!ushort BaseHasShortPixels;
+
 //----------------------------------------------------------
-// ofBaseImage
+// AbstractImage    ->   to be able to put different types of images in vectors...
+//----------------------------------------------------------
+//interface AbstractImage : BaseDraws, BaseHasTexture {
+    //virtual ~AbstractImage(){}
+//}
+
+interface IAnyImage : IDrawable, IHasTexture{}
+
+enum isAnyImage(T) = isMemberOfTypeClass!(T, IAnyImage);
+
+//----------------------------------------------------------
+// BaseImage
 //----------------------------------------------------------
 //template<typename T>
-interface BaseImage_(T): AbstractImage, BaseHasPixels_!T {
+//interface BaseImage_(T): AbstractImage, BaseHasPixels_!T
+//{
 //public:
-    //virtual ~ofBaseImage_<T>(){};
+    //virtual ~BaseImage_<T>(){};
+//}
+interface IImage(T) : IAnyImage, IHasPixels!T {}
+
+enum isImage(T, U) = isMemberOfTypeClass!(T, IImage!U);
+
+unittest{
+    static assert(isAnyImage!(IImage!ubyte));
+    static assert(isImage!(IImage!ubyte, ubyte));
+    static assert(isAnyImage!(IImage!float));
+    static assert(isImage!(IImage!float, float));
+    static assert(isAnyImage!(IImage!ushort));
+    static assert(isImage!(IImage!ushort, ushort));
 }
 
-alias BaseImage_!ubyte BaseImage;
-alias BaseImage_!float BaseFloatImage;
-alias BaseImage_!ushort BaseShortImage;
+enum isImage(T) = isImage!(T, ubyte);
+enum isFloatImage(T) = isImage!(T, float);
+enum isShortImage(T) = isImage!(T, ushort);
 
 //----------------------------------------------------------
-// ofBaseHasSoundStream
+// BaseHasSoundStream
 //----------------------------------------------------------
-abstract class BaseSoundInput{
-    void audioIn( float * input, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount ){
-        audioIn(input, bufferSize, nChannels);
-    }
 
-    void audioIn( float * input, int bufferSize, int nChannels ){  
-        audioReceived(input, bufferSize, nChannels);
-    }
-
-    void audioReceived( float * input, int bufferSize, int nChannels ){}
-}
-
-//----------------------------------------------------------
-// ofBaseHasSoundStream
-//----------------------------------------------------------
-abstract class BaseSoundOutput{
-    //virtual ~ofBaseSoundOutput() {};
-
-    void audioOut( float * output, int bufferSize, int nChannels, int deviceID, long unsigned long tickCount  ){
-        audioOut(output, bufferSize, nChannels);
-    }
-
-    void audioOut( float * output, int bufferSize, int nChannels ){
-        audioRequested(output, bufferSize, nChannels);
-    }
-
-    //legacy
-    void audioRequested( float * output, int bufferSize, int nChannels ){
-    }
+interface ISoundInput
+{
+    mixin(declOptionalMethod("void", "audioIn", ["float[]", "int", "int", "int", "ulong"]));
+    mixin(declOptionalMethod("void", "audioIn", ["float[]", "int", "int"]));
+    mixin(declOptionalMethod("void", "audioReceived", ["float[]", "int", "int"]));
 }
 
 
+enum isSoundInput(T) = isMemberOfTypeClass!(T, ISoundInput);
+
+
+void audioIn(T)(auto ref T obj, float[] input, int bufferSize, int nChannels, int deviceID, ulong tickCount)
+if(isSoundInput!T)
+{
+    obj.callOptional!("audioIn", (ref obj, input, bufferSize, nChannels, deviceID, tickCount){
+        obj.audioIn(input, bufferSize, nChannels);
+    })(input, bufferSize, nChannels, deviceID, tickCount);
+}
+
+
+void audioIn(T)(auto ref T obj, float[] input, int bufferSize, int nChannels)
+if(isSoundInput!T)
+{
+    obj.callOptional!("audioIn", (ref obj, input, bufferSize, nChannels){
+        obj.audioReceived(input, bufferSize, nChannels);
+    })(input, bufferSize, nChannels);
+}
+
+
+void audioReceived(T)(auto ref T obj, float[] input, int bufferSize, int nChannels)
+if(isSoundInput!T)
+{
+    obj.callOptional!("audioReceived", (ref obj, input, bufferSize, nChannels){
+        logger.writeln!"warning"("not implemented 'audioReceived' of ", obj);
+    })(input, bufferSize, nChannels);
+}
+
+
+unittest{
+    static assert(isSoundInput!ISoundInput);
+}
+
 //----------------------------------------------------------
-// ofBaseVideo
+// BaseHasSoundStream
 //----------------------------------------------------------
-interface BaseVideo: BaseHasPixels, BaseUpdates{
-    //~ofBaseVideo(){}
+interface ISoundOutput
+{
+    mixin(declOptionalMethod("void", "audioOut", ["float[]", "int", "int", "int", "ulong"]));
+    mixin(declOptionalMethod("void", "audioOut", ["float[]", "int", "int"]));
+    mixin(declOptionalMethod("void", "audioRequested", ["float[]", "int", "int"]));
+}
+
+
+enum isSoundOutput(T) = isMemberOfTypeClass!(T, ISoundOutput);
+
+
+void audioOut(T)(auto ref T obj, float[] input, int bufferSize, int nChannels, int deviceID, ulong tickCount)
+if(isSoundOutput!T)
+{
+    obj.callOptional!("audioOut", (ref obj, input, bufferSize, nChannels, deviceID, tickCount){
+        obj.audioOut(input, bufferSize, nChannels);
+    })(input, bufferSize, nChannels, deviceID, tickCount);
+}
+
+
+void audioOut(T)(auto ref T obj, float[] input, int bufferSize, int nChannels)
+if(isSoundOutput!T)
+{
+    obj.callOptional!("audioOut", (ref obj, input, bufferSize, nChannels){
+        obj.audioRequested(input, bufferSize, nChannels);
+    })(input, bufferSize, nChannels);
+}
+
+
+void audioRequested(T)(auto ref T obj, float[] input, int bufferSize, int nChannels)
+if(isSoundOutput!T)
+{
+    obj.callOptional!("audioRequested", (ref obj, input, bufferSize, nChannels){
+        logger.writeln!"warning"("not implemented 'audioRequested' of ", obj);
+    })(input, bufferSize, nChannels);
+}
+
+
+unittest{
+    static assert(isSoundOutput!ISoundOutput);
+}
+
+
+//----------------------------------------------------------
+// BaseVideo
+//----------------------------------------------------------
+interface IVideo : IHasPixels!ubyte, IUpdatable
+{
+    //~BaseVideo(){}
     bool isFrameNew();
     void close();
 }
 
 
-//----------------------------------------------------------
-// ofBaseVideoDraws
-//----------------------------------------------------------
-interface BaseVideoDraws: BaseVideo, BaseImage {
-    //virtual ~ofBaseVideoDraws(){}
+enum isVideo(T) = isMemberOfTypeClass!(T, IVideo);
+
+unittest{
+    static assert(isVideo!IVideo);
 }
 
-//----------------------------------------------------------
-// ofBaseVideoGrabber
-//----------------------------------------------------------
-abstract class BaseVideoGrabber: BaseVideo{
 
-    //~ofBaseVideoGrabber();
+//----------------------------------------------------------
+// BaseVideoDraws
+//----------------------------------------------------------
+interface IDrawableVideo : IVideo, IImage!ubyte {}
 
-    //needs implementing
+
+enum isDrawableVideo(T) = isMemberOfTypeClass!(T, IDrawableVideo);
+
+//----------------------------------------------------------
+// BaseVideoGrabber
+//----------------------------------------------------------
+interface IVideoGrabber : IVideo
+{
     VideoDevice[]   listDevices();
     bool    initGrabber(int w, int h);
-    void    update();
-    bool    isFrameNew();
-    
-    ubyte* getPixels();
-    
-    void    close();
-    
-    float   getHeight();
-    float   getWidth();
-    
-    bool setPixelFormat(PixelFormat pixelFormat);
-    PixelFormat getPixelFormat();
 
-    // implement only if internal API can upload directly to texture
-    Texture* getTexture(){ return NULL; }
+    float height() @property;
+    float width() @property;
+    
+    bool pixelFormat(PixelFormat pixelFormat) @property;
+    PixelFormat pixelFormat() @property;
+
+    mixin(declOptionalMethod("ref Texture", "texture", []));
 
     //should implement!
-    void setVerbose(bool bTalkToMe);
-    void setDeviceID(int _deviceID);
-    void setDesiredFrameRate(int framerate);
+    void verbose(bool bTalkToMe);
+    void deviceid(int _deviceID);
+    void desiredframerate(int framerate);
     void videoSettings();
 }
 
 
+enum isVideoGrabber = isMemberOfTypeClass!(IVideoGrabber, IVideo);
+
+private static Texture _texture_private;
+
+ref Texture texture(T)(auto ref T obj)
+if(isVideoGrabber!T)
+{
+    return obj.callOptional!("texture", (ref obj){
+        _texture_private = null;
+        return _texture_private;
+    })();
+}
+
+
 //----------------------------------------------------------
-// ofBaseVideoPlayer
+// BaseVideoPlayer
 //----------------------------------------------------------
-class ofBaseVideoPlayer: virtual public ofBaseVideo{
+interface IVideoPlayer : IVideo
+{
+    bool                loadMovie(string name);
     
-public:
-    virtual ~ofBaseVideoPlayer();
+    void                play();
+    void                stop();
+
+    mixin(declOptionalMethod("ref Texture", "texture", [])); // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
+
+    float               width();
+    float               height();
     
-    //needs implementing
-    virtual bool                loadMovie(string name) = 0;
-    virtual void                close() = 0;
-    virtual void                update() = 0;
-    
-    virtual void                play() = 0;
-    virtual void                stop() = 0;     
-    
-    virtual bool                isFrameNew() = 0;
-    virtual unsigned char *     getPixels() = 0;
-    virtual ofTexture *         getTexture(){return NULL;}; // if your videoplayer needs to implement seperate texture and pixel returns for performance, implement this function to return a texture instead of a pixel array. see iPhoneVideoGrabber for reference
-    
-    virtual float               getWidth() = 0;
-    virtual float               getHeight() = 0;
-    
-    virtual bool                isPaused() = 0;
-    virtual bool                isLoaded() = 0;
-    virtual bool                isPlaying() = 0;
-    
-    virtual bool                setPixelFormat(ofPixelFormat pixelFormat) = 0;
-    virtual ofPixelFormat       getPixelFormat() = 0;
-        
+    bool                isPaused();
+    bool                isLoaded();
+    bool                isPlaying();
+
+    bool                pixelFormat(PixelFormat pixelFormat) @property;
+    PixelFormat         pixelFormat() @property;
+
     //should implement!
-    virtual float               getPosition();
-    virtual float               getSpeed();
-    virtual float               getDuration();
-    virtual bool                getIsMovieDone();
+    float               position();
+    float               speed();
+    float               duration();
+    bool                isMovieDone();
     
-    virtual void                setPaused(bool bPause);
-    virtual void                setPosition(float pct);
-    virtual void                setVolume(float volume); // 0..1
-    virtual void                setLoopState(ofLoopType state);
-    virtual void                setSpeed(float speed);
-    virtual void                setFrame(int frame);  // frame 0 = first frame...
+    void                setPaused(bool bPause);
+    void                setPosition(float pct);
+    void                setVolume(float volume); // 0..1
+    void                setLoopState(LoopType state);
+    void                setSpeed(float speed);
+    void                setFrame(int frame);  // frame 0 = first frame...
     
-    virtual int                 getCurrentFrame();
-    virtual int                 getTotalNumFrames();
-    virtual ofLoopType          getLoopState();
+    int                 currentFrame();
+    int                 totalNumFrames();
+    LoopType            loopState();
     
-    virtual void                firstFrame();
-    virtual void                nextFrame();
-    virtual void                previousFrame();
-};
+    void                firstFrame();
+    void                nextFrame();
+    void                previousFrame();
+}
+
+
+enum isVideoPlayer(T) = isMemberOfTypeClass!(T, IVideoPlayer);
+
+
+ref Texture texture(T)(auto ref T obj)
+if(isVideoPlayer!T)
+{
+    return obj.callOptional!("texture", (ref obj){
+        _texture_private = null;
+        return _texture_private;
+    })();
+}
+
+
 
 //----------------------------------------------------------
 // base renderers
 //----------------------------------------------------------
-class of3dPrimitive;
+//class R3Primitive;
 
-class ofBaseRenderer{
-public:
-    virtual ~ofBaseRenderer(){}
+interface IRenderer
+{
+    ref string typeAsString() const;
 
-    virtual const string & getType()=0;
+    void update();
 
-    virtual void update()=0;
-
-    virtual void draw(ofPolyline & poly)=0;
-    virtual void draw(ofPath & shape)=0;
-    virtual void draw(ofMesh & vertexData, bool useColors, bool useTextures, bool useNormals)=0;
-    virtual void draw(ofMesh & vertexData, ofPolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals)=0;
-    virtual void draw(of3dPrimitive& model, ofPolyRenderMode renderType)=0;
-    virtual void draw(ofImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
-    virtual void draw(ofFloatImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
-    virtual void draw(ofShortImage & image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh)=0;
+    void draw(ref Polyline poly);
+    void draw(ref Path shape);
+    void draw(ref Mesh vertexData, bool useColors, bool useTextures, bool useNormals);
+    void draw(ref Mesh vertexData, PolyRenderMode renderType, bool useColors, bool useTextures, bool useNormals);
+    void draw(ref R3Primitive model, PolyRenderMode renderType);
+    void draw(ref Image image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+    void draw(ref FloatImage image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
+    void draw(ref ShortImage image, float x, float y, float z, float w, float h, float sx, float sy, float sw, float sh);
 
     //--------------------------------------------
     // transformations
-    virtual void pushView(){};
-    virtual void popView(){};
+    mixin(declOptionalMethod("void", "pushView", []));
+    mixin(declOptionalMethod("void", "popView", []));
 
     // setup matrices and viewport (upto you to push and pop view before and after)
-    // if width or height are 0, assume windows dimensions (ofGetWidth(), ofGetHeight())
+    // if width or height are 0, assume windows dimensions (GetWidth(), GetHeight())
     // if nearDist or farDist are 0 assume defaults (calculated based on width / height)
-    virtual void viewport(ofRectangle viewport){}
-    virtual void viewport(float x = 0, float y = 0, float width = 0, float height = 0, bool vflip=ofIsVFlipped()){}
-    virtual void setupScreenPerspective(float width = 0, float height = 0, float fov = 60, float nearDist = 0, float farDist = 0){}
-    virtual void setupScreenOrtho(float width = 0, float height = 0, float nearDist = -1, float farDist = 1){}
-    virtual void setOrientation(ofOrientation orientation, bool vFlip){};
-    virtual ofRectangle getCurrentViewport(){return ofRectangle();}
-    virtual ofRectangle getNativeViewport(){return getCurrentViewport();}
-    virtual int getViewportWidth(){return 0;}
-    virtual int getViewportHeight(){return 0;}
-    virtual bool isVFlipped() const{return true;}
+    mixin(declOptionalMethod("void", "viewport", ["Rectangle"]));
+    mixin(declOptionalMethod("void", "viewport", ["float", "float", "float", "float", "bool"]));
+    mixin(declOptionalMethod("void", "setupScreenPerspective", ["float", "float", "float", "float", "float"]));
+    mixin(declOptionalMethod("void", "setupScreenOrtho", ["float", "float", "float", "float"]));
+    mixin(declOptionalMethod("void", "setOrientation", ["Orientation", "bool"]));
+    mixin(declOptionalMethod("Rectangle", "currentViewport", []));
+    mixin(declOptionalMethod("Rectangle", "nativeViewport", []));
+    mixin(declOptionalMethod("int", "viewportWidth", []));
+    mixin(declOptionalMethod("int", "viewportHeight", []));
+    mixin(declOptionalMethod("bool", "isVFlipped", [], "const"));
 
-    virtual void setCoordHandedness(ofHandednessType handedness){};
-    virtual ofHandednessType getCoordHandedness(){return OF_LEFT_HANDED;};
+    mixin(declOptionalMethod("void", "coordHandedness", ["HandednessType"]));
+    mixin(declOptionalMethod("HandednessType", "coordHandedness", []));
 
     //our openGL wrappers
-    virtual void pushMatrix(){};
-    virtual void popMatrix(){};
-    virtual ofMatrix4x4 getCurrentMatrix(ofMatrixMode matrixMode_) const { return ofMatrix4x4();};
-    virtual void translate(float x, float y, float z = 0){};
-    virtual void translate(const ofPoint & p){};
-    virtual void scale(float xAmnt, float yAmnt, float zAmnt = 1){};
-    virtual void rotate(float degrees, float vecX, float vecY, float vecZ){};
-    virtual void rotateX(float degrees){};
-    virtual void rotateY(float degrees){};
-    virtual void rotateZ(float degrees){};
-    virtual void rotate(float degrees){};
-    virtual void matrixMode(ofMatrixMode mode){};
-    virtual void loadIdentityMatrix (void){};
-    virtual void loadMatrix (const ofMatrix4x4 & m){};
-    virtual void loadMatrix (const float *m){};
-    virtual void multMatrix (const ofMatrix4x4 & m){};
-    virtual void multMatrix (const float *m){};
+    mixin(declOptionalMethod("void", "pushMatrix", []));
+    mixin(declOptionalMethod("void", "popMatrix", []));
+    mixin(declOptionalMethod("ref Matrix4x4f", "currentMatrix", ["MatrixMode"]));
+    mixin(declOptionalMethod("void", "translate", ["float", "float", "float"]));
+    mixin(declOptionalMethod("void", "translate", ["const ref Point"]));
+    mixin(declOptionalMethod("void", "scale", ["float", "float", "float"]));
+    mixin(declOptionalMethod("void", "rotate", ["float", "float", "float", "float"]));
+    mixin(declOptionalMethod("void", "rotateX", ["float"]));
+    mixin(declOptionalMethod("void", "rotateY", ["float"]));
+    mixin(declOptionalMethod("void", "rotateZ", ["float"]));
+    mixin(declOptionalMethod("void", "rotate", ["float"]));
+    mixin(declOptionalMethod("void", "matrixMode", ["MatrixMode"]));
+    mixin(declOptionalMethod("void", "loadIdentityMatrix", []));
+    mixin(declOptionalMethod("void", "loadMatrix", ["const ref Matrix4x4f"]));
+    mixin(declOptionalMethod("void", "loadMatrix", ["const float*"]));
+    mixin(declOptionalMethod("void", "multMatrix", ["const ref Matrix4x4f"]));
+    mixin(declOptionalMethod("void", "multMatrix", ["const float*"]));
     
     // screen coordinate things / default gl values
-    virtual void setupGraphicDefaults(){};
-    virtual void setupScreen(){};
+    mixin(declOptionalMethod("void", "setupGraphicDefaults", []));
+    mixin(declOptionalMethod("void", "setupScreen", []));
 
     // drawing modes
-    virtual void setRectMode(ofRectMode mode)=0;
-    virtual ofRectMode getRectMode()=0;
-    virtual void setFillMode(ofFillFlag fill)=0;
-    virtual ofFillFlag getFillMode()=0;
-    virtual void setLineWidth(float lineWidth)=0;
-    virtual void setDepthTest(bool depthTest)=0;
-    virtual void setBlendMode(ofBlendMode blendMode)=0;
-    virtual void setLineSmoothing(bool smooth)=0;
-    virtual void setCircleResolution(int res){};
-    virtual void enablePointSprites(){};
-    virtual void disablePointSprites(){};
-    virtual void enableAntiAliasing(){};
-    virtual void disableAntiAliasing(){};
+    void setRectMode(RectMode mode);
+    RectMode getRectMode();
+    void setFillMode(FillFlag fill);
+    FillFlag getFillMode();
+    void setLineWidth(float lineWidth);
+    void setDepthTest(bool depthTest);
+    void setBlendMode(BlendMode blendMode);
+    void setLineSmoothing(bool smooth);
+    mixin(declOptionalMethod("void", "setCircleResolution", ["int"]));
+    mixin(declOptionalMethod("void", "enablePointSprites", []));
+    mixin(declOptionalMethod("void", "disablePointSprites", []));
+    mixin(declOptionalMethod("void", "enableAntiAliasing", []));
+    mixin(declOptionalMethod("void", "disableAntiAliasing", []));
 
     // color options
-    virtual void setColor(int r, int g, int b){}; // 0-255
-    virtual void setColor(int r, int g, int b, int a){}; // 0-255
-    virtual void setColor(const ofColor & color){};
-    virtual void setColor(const ofColor & color, int _a){};
-    virtual void setColor(int gray){}; // new set a color as grayscale with one argument
-    virtual void setHexColor( int hexColor ){}; // hex, like web 0xFF0033;
+    mixin(declOptionalMethod("void", "setColor", ["int", "int", "int"])); // 0-255
+    mixin(declOptionalMethod("void", "setColor", ["int", "int", "int", "int"])); // 0-255
+    mixin(declOptionalMethod("void", "setColor", ["const ref Color!()"]));
+    mixin(declOptionalMethod("void", "setColor", ["const ref Color!()", "int"]));
+    mixin(declOptionalMethod("void", "setColor", ["int"])); // new set a color as grayscale with one argument
+    mixin(declOptionalMethod("void", "setHexColor", ["int"])); // hex, like web 0xFF0033;
 
     // bg color
-    virtual ofFloatColor & getBgColor()=0;
-    virtual bool bClearBg(){return true;};
-    virtual void background(const ofColor & c){};
-    virtual void background(float brightness){};
-    virtual void background(int hexColor, float _a=255.0f){};
-    virtual void background(int r, int g, int b, int a=255){};
+    ref FloatColor getBgColor();
+    mixin(declOptionalMethod("bool", "bClearBg", []));
+    mixin(declOptionalMethod("void", "background", ["const ref Color!()"]));
+    mixin(declOptionalMethod("void", "background", ["float"]));
+    mixin(declOptionalMethod("void", "background", ["int", "float"]));
+    mixin(declOptionalMethod("void", "background", ["int", "int", "int", "int"]));
 
-    virtual void setBackgroundAuto(bool bManual){};     // default is true
+    mixin(declOptionalMethod("void", "setBackgroundAuto", ["bool"]));     // default is true
 
-    virtual void clear(float r, float g, float b, float a=0){};
-    virtual void clear(float brightness, float a=0){};
-    virtual void clearAlpha(){};
+    mixin(declOptionalMethod("void", "clear", ["float", "float", "float", "float"]));
+    mixin(declOptionalMethod("void", "clear", ["float", "float"]));
+    mixin(declOptionalMethod("void", "clearAlpha", []));
 
     // drawing
-    virtual void drawLine(float x1, float y1, float z1, float x2, float y2, float z2)=0;
-    virtual void drawRectangle(float x, float y, float z, float w, float h)=0;
-    virtual void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3)=0;
-    virtual void drawCircle(float x, float y, float z, float radius)=0;
-    virtual void drawEllipse(float x, float y, float z, float width, float height)=0;
-    virtual void drawString(string text, float x, float y, float z, ofDrawBitmapMode mode)=0;
+    void drawLine(float x1, float y1, float z1, float x2, float y2, float z2);
+    void drawRectangle(float x, float y, float z, float w, float h);
+    void drawTriangle(float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3);
+    void drawCircle(float x, float y, float z, float radius);
+    void drawEllipse(float x, float y, float z, float width, float height);
+    void drawString(string text, float x, float y, float z, DrawBitmapMode mode);
 
 
     // returns true if the renderer can render curves without decomposing them
-    virtual bool rendersPathPrimitives()=0;
-};
-
-class ofBaseGLRenderer: public ofBaseRenderer{
-public:
-    virtual void setCurrentFBO(ofFbo * fbo)=0;
-
-    virtual void enableTextureTarget(int textureTarget)=0;
-    virtual void disableTextureTarget(int textureTarget)=0;
-};
+    bool rendersPathPrimitives();
+}
 
 
-class ofBaseSerializer{
-public:
-    virtual ~ofBaseSerializer(){}
+template defaultMethod(string name)
+{
+    auto ref defaultMethod(T, U...)(auto ref T obj, auto ref U args)
+    {
+        return obj.callOptional!(name, (ref T obj, U args){
+            logger.writeln!"warning"("not implemented '" ~ name ~ "' of ", obj);
 
-    virtual void serialize(const ofAbstractParameter & parameter)=0;
-    virtual void deserialize(ofAbstractParameter & parameter)=0;
-};
-
-class ofBaseFileSerializer: public ofBaseSerializer{
-public:
-    virtual ~ofBaseFileSerializer(){}
-
-    virtual bool load(const string & path)=0;
-    virtual bool save(const string & path)=0;
-};
+            alias Ret = typeof(mixin(`obj.` ~ name ~ "()")());
+          static if(!is(Ret == void))
+            return Ret.init;
+        });
+    }
+}
 
 
+alias pushView = defaultMethod!"pushView";
+alias popView = defaultMethod!"popView";
+alias viewport = defaultMethod!"viewport";
+alias setupScreenPerspective = defaultMethod!"setupScreenPerspective";
+alias setupScreenOrtho = defaultMethod!"setupScreenOrtho";
+alias setOrientation = defaultMethod!"setOrientation";
+alias currentViewport = defaultMethod!"currentViewport";
+alias nativeViewport = defaultMethod!"nativeViewport";
+alias viewportWidth = defaultMethod!"viewportWidth";
+alias viewportHeight = defaultMethod!"viewportHeight";
+alias isVFlipped = defaultMethod!"isVFlipped";
+alias coordHandedness = defaultMethod!"coordHandedness";
+alias pushMatrix = defaultMethod!"pushMatrix";
+alias popMatrix = defaultMethod!"popMatrix";
+alias getCurrentMatrix = defaultMethod!"currentMatrix";
+alias translate = defaultMethod!"translate";
+alias scale = defaultMethod!"scale";
+alias rotate = defaultMethod!"rotate";
+alias rotateX = defaultMethod!"rotateX";
+alias rotateY = defaultMethod!"rotateY";
+alias rotateZ = defaultMethod!"rotateZ";
+alias matrixMode = defaultMethod!"matrixMode";
+alias loadIdentityMatrix = defaultMethod!"loadIdentityMatrix";
+alias loadMatrix = defaultMethod!"loadMatrix";
+alias multMatrix = defaultMethod!"multMatrix";
+alias setupGraphicDefaults = defaultMethod!"setupGraphicDefaults";
+alias setupScreen = defaultMethod!"setupScreen";
+alias setCircleResolution = defaultMethod!"setCircleResolution";
+alias enablePointSprites = defaultMethod!"enablePointSprites";
+alias disablePointSprites = defaultMethod!"disablePointSprites";
+alias enableAntiAliasing = defaultMethod!"enableAntiAliasing";
+alias disableAntiAliasing = defaultMethod!"disableAntiAliasing";
+alias setColor = defaultMethod!"setColor";
+alias setHexColor = defaultMethod!"setHexColor";
+alias bClearBg = defaultMethod!"bClearBg";
+alias background = defaultMethod!"background";
+alias setBackgroundAuto = defaultMethod!"setBackgroundAuto";
+alias clear = defaultMethod!"clear";
+alias clearAlpha = defaultMethod!"clearAlpha";
+
+
+enum isRenderer(T) = isTypeClass!(T, IRenderer);
+
+
+interface IGLRenderer : IRenderer
+{
+    void setCurrentFBO(ref Fbo fbo);
+
+    void enableTextureTarget(int textureTarget);
+    void disableTextureTarget(int textureTarget);
+}
+
+
+//interface BaseSerializer
+//{
+    //virtual ~BaseSerializer(){}
+
+    //void serialize(const ref AbstractParameter parameter);
+    //void deserialize(ref AbstractParameter parameter);
+//}
+
+
+//interface BaseFileSerializer : BaseSerializer
+//{
+    //virtual ~BaseFileSerializer(){}
+
+    //bool load(const ref string path);
+    //bool save(const ref string path);
+//}
