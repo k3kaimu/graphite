@@ -1,7 +1,7 @@
 module graphite.events.eventutils;
 
 import std.algorithm,
-       std.signal,
+       phobosx.signal,  //
        std.variant;
 
 
