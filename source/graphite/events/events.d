@@ -4,9 +4,9 @@ import graphite.events.eventutils;
 import graphite.types.point;
 
 import std.array,
-       std.format;
-
-version(none):
+       std.format,
+       std.string,
+       std.variant;
 
 
 struct Mouse
@@ -97,8 +97,10 @@ struct ResizeEventInfo
 }
 
 
-class CoreEvents
+final class CoreEvents
 {
+    this(){}
+
     Event!(Variant) setup, update, draw, exit;
 
     Event!(EntryEventInfo) windowEntered;
@@ -176,7 +178,7 @@ class CoreEvents
 
 
   private:
-    string genMethods(string name, string[] slots)
+    static string genMethods(string name, string[] slots)
     {
         return format(q{
             void connect%1$s(string method, ClassType)(ClassType obj)
@@ -233,6 +235,9 @@ class CoreEvents
 
 CoreEvents globalEvents() @property
 {
-    static CoreEvents events = new CoreEvents;
+    static CoreEvents events;
+    if(events is null)
+        events = new CoreEvents();
+
     return events;
 }

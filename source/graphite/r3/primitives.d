@@ -1,15 +1,15 @@
-module graphite.r3.primitive;
+module graphite.r3.primitives;
 
 import graphite;
 
-class IPrimitive : r3.Node
+class R3Primitive : Node
 {
     void mapTexCoords(float u1, float v1, float u2, float v2);
-    void mapTexCoords(ref gl.Texture inTexture);
+    void mapTexCoords(ref Texture inTexture);
 
-    ref r3.Mesh mesh() @property;
+    ref Mesh mesh() @property;
 
-    ref math.Vec4f texCoords() @property;
+    ref Vec4f texCoords() @property;
 
     bool hasScaling() @property;
     bool hasNormalsEnabled() @property;
@@ -29,8 +29,8 @@ class IPrimitive : r3.Node
     void drawVertices();
     void drawWireframe();
     void drawFaces();
-    void draw();
-    void draw(gl.PolyRenderMode);
+    override void draw();
+    void draw(PolyRenderMode);
     void drawNormals(float length, bool bFaceNormals = false);
     void drawAxes(float a_size);
 
@@ -39,10 +39,10 @@ class IPrimitive : r3.Node
 
     void normalizeAndApplySavedTexCoords();
 
-    math.Vec4f _texCoords;
+    Vec4f _texCoords;
     bool _usingVbo;
-    r3.Mesh* _mesh;
-    r3.Mesh _normalsMesh;
+    Mesh* _mesh;
+    Mesh _normalsMesh;
 
-    utils.constant.IndexType[] indexcies(int startIndex, int endIndex) @property;
+    IndexType[] indexcies(int startIndex, int endIndex) @property;
 }

@@ -399,13 +399,13 @@ struct Color(PixelType = ubyte)
 
     auto asVec4Ref() pure nothrow @safe @property
     {
-        return _v.reference;
+        return _v.stackRef;
     }
 
 
     auto asVec3Ref() pure nothrow @safe @property
     {
-        return _v.reference.swizzle.xyz;
+        return _v.stackRef.swizzle.xyz;
     }
 
 

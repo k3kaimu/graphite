@@ -2,6 +2,7 @@ module graphite.twitter.api;
 
 import graphite.twitter;
 
+import graphite.utils.json;
 import graphite.utils.channel;
 
 import std.algorithm;
@@ -14,6 +15,7 @@ import std.digest.sha;
 import std.exception;
 import std.file;
 import std.format;
+import std.json;
 import std.path;
 import std.range;
 import std.string;
@@ -452,17 +454,43 @@ struct Twitter
       static:
         auto settings(in AccessToken token)
         {
-            struct Result
-            {
-                bool always_use_https;
-                bool discoverable_by_email;
-                bool geo_enable;
-                string language;
-                bool protected_;
+            alias Response =
+            JSONObjectType!(null,
+                            bool, "always_use_https",
+                            bool, "discoverable_by_email",
+                            bool, "geo_enabled",
+                            string, "language",
+                            bool, "protected_",
+                            string, "screen_name",
+                            bool, "show_all_inline_media",
+                            JSONObjectType!(null,
+                                bool, "enabled",
+                                typeof(null), "end_time",
+                                typeof(null), "start_time",
+                            ), "sleep_time",
+                            JSONObjectType!(null,
+                                string, "name",
+                                string, "tzinfo_name",
+                                int, "utc_offset",
+                            ),"time_zone",
+                            JSONObjectType!(null,
+                                string, "country",
+                                string, "countryCode",
+                                string, "name",
+                                ulong, "parentid",
+                                JSONObjectType!(null,
+                                    uint, "code",
+                                    string, "name"
+                                ), "placeType",
+                                string, "url",
+                                ulong, "woeid",
+                            )[], "trend_location",
+                            bool, "use_cookie_personalization"
+                        );
 
-            }
-
-            return signedGet(token, `https://api.twitter.com/1.1/account/settings.json`, null);
+            auto json = signedGet(token, `https://api.twitter.com/1.1/account/settings.json`, null);
+            auto jv = parseJSON(json);
+            return Response.fromJSONValueImpl(jv);
         }
 
 

@@ -92,14 +92,14 @@ struct Event(T...)
     //mixin(signal!(FiredContext, T)("beforeApp"));
     //mixin(signal!(FiredContext, T)("sameTimeApp"));
     //mixin(signal!(FiredContext, T)("afterApp"));
-    ref RestrictedSignal!(string, int) beforeApp() { return _beforeApp;}
-    private Signal!(string, int) _beforeApp;
+    ref RestrictedSignal!(FiredContext, T) beforeApp() { return _beforeApp;}
+    private Signal!(FiredContext, T) _beforeApp;
 
-    ref RestrictedSignal!(string, int) sameTimeApp() { return _sameTimeApp;}
-    private Signal!(string, int) _sameTimeApp;
+    ref RestrictedSignal!(FiredContext, T) sameTimeApp() { return _sameTimeApp;}
+    private Signal!(FiredContext, T) _sameTimeApp;
 
-    ref RestrictedSignal!(string, int) afterApp() { return _afterApp;}
-    private Signal!(string, int) _afterApp;
+    ref RestrictedSignal!(FiredContext, T) afterApp() { return _afterApp;}
+    private Signal!(FiredContext, T) _afterApp;
 
 
     void disable()
@@ -154,11 +154,10 @@ unittest
 {
     auto event = Event!bool();
 
-    event.sameTimeApp.strongConnect((FiredContext ctx, bool b){
+    event.sameTimeApp.strongConnect(delegate(FiredContext ctx, bool b){
         assert(b);
         assert(ctx.sender == null || ctx.sender.peek!(Event!bool));
     });
 
     event.emit(true);
-    event.emit(event, true);
 }

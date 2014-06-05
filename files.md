@@ -8,7 +8,7 @@ videoとsoundもSDLで乗り切れるよね？
 
 ## 推奨攻略モジュール
 
-    3. ofColor
+    3. (ofColor)
     4. ofTypes
     5. utils
 
@@ -18,38 +18,38 @@ videoとsoundもSDLで乗り切れるよね？
 ## パッケージ一覧
 
 + app
-    - ofAppBaseWindow
+    - [ofAppBaseWindow]
 
-        [ofPoint], ofTypes, ofAppEGLWindow, ofGraphics, ofAppRunner, ofUtils, ofFileUtils, ofGLProgrammableRenderer
+        [ofPoint], ofTypes, ofAppEGLWindow, ofGraphics, ofAppRunner, ofUtils, ofFileUtils, (ofGLProgrammableRenderer)
 
 
     - ofAppEGLWindow(OpenGL ES用なので実装する必要なし)
 
-        ofBaseApp, ofAppBaseWindow, [ofThread], ofImage
+        [opBaseApp], [ofAppBaseWindow], [ofThread], ofImage
 
 
     - ofAppGLFWWindow
 
-        [ofConstants], ofAppBaseWindow, ofEvents, ofPixels, ofBaseApp, ofGLProgrammableRenderer ofAppRunner
+        [ofConstants], [ofAppBaseWindow], [ofEvents], (ofPixels), [opBaseApp], (ofGLProgrammableRenderer) ofAppRunner
 
 
     - ofAppGlutWindow
 
-        [ofConstants], ofAppBaseWindow, ofEvents, ofTypes, ofBaseApp, ofUtils, ofGraphics, ofAppRunner, ofGLProgrammableRenderer
+        [ofConstants], [ofAppBaseWindow], [ofEvents], ofTypes, [opBaseApp], ofUtils, ofGraphics, ofAppRunner, (ofGLProgrammableRenderer)
 
 
     - ofAppNoWindow
 
-        [ofConstants], ofAppBaseWindow, ofBaseTypes, ofBaseApp, ofGraphics
+        [ofConstants], [ofAppBaseWindow], (ofBaseTypes), [opBaseApp], ofGraphics
 
 
     - ofAppRunner
 
-        [ofConstants], [ofPoint], ofRectangle, ofTypes, ofBaseApp, ofAppBaseWindow, ofSoundPlayer, ofSoundStream, ofImage, ofUtils, ofEvents, ofMath, ofGraphics, ofGLRenderer, ofGLProgrammableRenderer, ofTrueTypeFont, ofURLFileLoader, Poco/Net/SSLManager, ofQtUtils
+        [ofConstants], [ofPoint], (ofRectangle), ofTypes, [opBaseApp], [ofAppBaseWindow], ofSoundPlayer, ofSoundStream, ofImage, ofUtils, [ofEvents], ofMath, ofGraphics, ofGLRenderer, (ofGLProgrammableRenderer), ofTrueTypeFont, ofURLFileLoader, Poco/Net/SSLManager, ofQtUtils
 
-    - ofBaseApp
+    - [opBaseApp]
 
-        [ofPoint], ofEvents, ofBaseTypes,
+        [ofPoint], [ofEvents], (ofBaseTypes),
 
 
     - ofIcon
@@ -61,7 +61,7 @@ videoとsoundもSDLで乗り切れるよね？
 
     - ofArduino
 
-        ofEvents, ofSerial, ofUtils
+        [ofEvents], ofSerial, ofUtils
 
 
     - ofSerial
@@ -76,78 +76,78 @@ videoとsoundもSDLで乗り切れるよね？
         Poco/AbstractPriorityDelegate
 
 
-    - ofEvents
+    - [ofEvents]
 
-        [ofConstants], [ofPoint], ofEventUtils, ofAppRunner, ofBaseApp, ofUtils, ofGraphics
+        [ofConstants], [ofPoint], [ofEventUtils], ofAppRunner, [opBaseApp], ofUtils, ofGraphics
 
 
-    - ofEventUtils
+    - [ofEventUtils]
 
         ofConstant, Poco/PriorityEvent, Poco/PriorityDelegate, ofDelegate
 
 
 + gl
 
-    - ofFbo
+    - (ofFbo)
 
-        ofTexture, [ofConstants], ofAppRunner, ofUtils, ofGraphics, ofGLRenderer,
+        (ofTexture), [ofConstants], ofAppRunner, ofUtils, ofGraphics, ofGLRenderer,
 
 
-    - ofGLProgrammableRenderer
+    - (ofGLProgrammableRenderer)
 
-        ofBaseTypes, ofPolyline, [ofMatrix4x4], ofShader, ofGraphics, ofMatrixStack, ofMesh, ofPath, ofGraphics, ofAppRunner, ofBitmapFont, ofGLUtils, ofImage, ofFbo, ofVbo, of3dPrimitives
+        (ofBaseTypes), (ofPolyline), [ofMatrix4x4], (ofShader), ofGraphics, (ofMatrixStack), (ofMesh), ofPath, ofGraphics, ofAppRunner, ofBitmapFont, ofGLUtils, ofImage, (ofFbo), ofVbo, of3dPrimitives
 
 
     - ofGLRenderer
 
-        ofBaseTypes, ofPolyline, [ofMatrix4x4], ofGraphics, ofMatrixStack, ofMesh, ofPath, ofAppRunner, of3dPrimitives, ofBitmapFont, ofGLUtils, ofImage, ofFbo
+        (ofBaseTypes), (ofPolyline), [ofMatrix4x4], ofGraphics, (ofMatrixStack), (ofMesh), ofPath, ofAppRunner, of3dPrimitives, ofBitmapFont, ofGLUtils, ofImage, (ofFbo)
 
 
     - ofGLUtils
 
-        ofConstans, ofTypes, ofPixels, ofProgrammableRenderer, ofGraphics, ofShader, ofBaseTypes, ofRendererCollection
+        ofConstans, ofTypes, (ofPixels), ofProgrammableRenderer, ofGraphics, (ofShader), (ofBaseTypes), ofRendererCollection
 
 
     - ofLight
 
-        ofNode, ofColor, of3dGraphics, [ofConstants], [ofLog], ofUtils,
+        ofNode, (ofColor), of3dGraphics, [ofConstants], [ofLog], ofUtils,
 
 
     - ofMaterial
 
-        ofColor, [ofConstants],
+        (ofColor), [ofConstants],
 
 
-    - ofShader
+    - (ofShader)
 
-        [ofConstants], ofBaseTypes, ofTexture, [ofMatrix4x4], ofAppBaseWindow,
+        [ofConstants], (ofBaseTypes), (ofTexture), [ofMatrix4x4], [ofAppBaseWindow],
 
 
-    - ofTexture
+    - (ofTexture)
 
-        [ofPoint]s, ofRectangle, ofBaseTypes, [ofConstants], ofVboMesh, ofUtils, ofAppRunner, ofGraphics, ofPixels, ofGLUtils,
+        [ofPoint]s, (ofRectangle), (ofBaseTypes), [ofConstants], ofVboMesh, ofUtils, ofAppRunner, ofGraphics, (ofPixels), ofGLUtils,
 
 
     - ofVbo
 
-        [ofConstants], [ofVec3f], ofColor, ofUtils, ofMesh, ofGLUtils, ofUtils, ofShader, ofGLProgrammableRender
+        [ofConstants], [ofVec3f], (ofColor), ofUtils, (ofMesh), ofGLUtils, ofUtils, (ofShader), ofGLProgrammableRender
 
 
      - ofVboMesh
 
-        ofMesh, ofVbo, 
+        (ofMesh), ofVbo, 
 
 
 + graphics
 
     - of3dGraphics
 
-        [ofConstants], ofColor, [ofPoint], [ofMatrix4x4], ofRectangle, ofTypes, ofBaseType, ofGLRenderer, of3dPrimitives, ofGraphics, ofVboMesh
+        [ofConstants], (ofColor), [ofPoint], [ofMatrix4x4], (ofRectangle), ofTypes, ofBaseType, ofGLRenderer, of3dPrimitives, ofGraphics, ofVboMesh
 
 
     - ofBitmapFont
 
-        [ofCOnstants], ofRectangle, ofGraphics
+        [ofCOnstants], (ofRectangle), ofGraphics
 
 
     - ofCairoRenderer
@@ -157,50 +157,50 @@ videoとsoundもSDLで乗り切れるよね？
 
     - ofGraphics
 
-        [ofConstants], ofColor, [ofPoint], [ofMatrix4x4], ofRectangle, ofTypes, ofBaseTypes
+        [ofConstants], (ofColor), [ofPoint], [ofMatrix4x4], (ofRectangle), ofTypes, (ofBaseTypes)
 
 
     - ofImage
 
-        ofFileUtils, ofTexture, ofPixels, ofBaseTypes, [ofConstants], ofAppRunner, ofTypes, ofURLFileLoader, ofGraphics, FreeImage
+        ofFileUtils, (ofTexture), (ofPixels), (ofBaseTypes), [ofConstants], ofAppRunner, ofTypes, ofURLFileLoader, ofGraphics, FreeImage
 
 
     - ofPath
 
-        [ofConstants], [ofPoint], ofColor, ofPolyline, ofBaseType, ofVboMesh, ofTessellator, ofGrapics
+        [ofConstants], [ofPoint], (ofColor), (ofPolyline), ofBaseType, ofVboMesh, ofTessellator, ofGrapics
 
 
-    - ofPixels
+    - (ofPixels)
 
 
-        [ofConstants], ofUtils, ofColor, ofMath
+        [ofConstants], ofUtils, (ofColor), ofMath
 
 
-    - ofPolyline
+    - (ofPolyline)
 
-        [ofPoint], [ofConstants], ofRectangle, ofPolyline, ofGraphics
+        [ofPoint], [ofConstants], (ofRectangle), (ofPolyline), ofGraphics
 
 
     - ofRendererCollection
 
-        ofBaseTypes, ofGLRenderer
+        (ofBaseTypes), ofGLRenderer
 
 
     - ofTessellator
 
-        [ofConstants], ofMesh, ofTypes, ofPolyline, tesselator
+        [ofConstants], (ofMesh), ofTypes, (ofPolyline), [tesselator]
 
 
     - ofTrueTypeFont
 
-        [ofPoint], ofRectangle, [ofConstants], ofPath, ofTexture, ofMesh
+        [ofPoint], (ofRectangle), [ofConstants], ofPath, (ofTexture), (ofMesh)
 
 
 + math
 
     - ofMath
 
-        [ofPoint], [ofConstants], ofUtils, ofAppRunner, float, [ofNoise], ofPolyline
+        [ofPoint], [ofConstants], ofUtils, ofAppRunner, float, [ofNoise], (ofPolyline)
 
 
     - [ofMatrix3x3] [攻略済み]
@@ -242,7 +242,7 @@ videoとsoundもSDLで乗り切れるよね？
 
     - of3dPrimitives
 
-        ofVboMesh, ofRectangle, ofNode, ofRTexture, ofGraphics
+        ofVboMesh, (ofRectangle), ofNode, ofRTexture, ofGraphics
 
 
     - of3dUtils
@@ -252,17 +252,17 @@ videoとsoundもSDLで乗り切れるよね？
 
     - ofCamera
 
-        ofRectangle, ofAppRunner, ofNode, [ofLog]
+        (ofRectangle), ofAppRunner, ofNode, [ofLog]
 
 
     - ofEasyCam
 
-        ofCamera, ofEvents, ofMath, ofUtils
+        ofCamera, [ofEvents], ofMath, ofUtils
 
 
-    - ofMesh
+    - (ofMesh)
 
-        [ofVec3f], [ofVec2f], ofColor, ofUtils, [ofConstants], ofGLUtils, ofMesh, ofGraphics
+        [ofVec3f], [ofVec2f], (ofColor), ofUtils, [ofConstants], ofGLUtils, (ofMesh), ofGraphics
 
 
     - ofNode
@@ -289,12 +289,12 @@ videoとsoundもSDLで乗り切れるよね？
 
     - ofOpenALSoundPlayer
 
-        [ofConstants], ofBaseSoundPlayer, ofEvents, [ofThread], OpenAL/al, OpenAL/alc, kiss_fft, kiss_fftr, sndfile, mpg123
+        [ofConstants], ofBaseSoundPlayer, [ofEvents], [ofThread], OpenAL/al, OpenAL/alc, kiss_fft, kiss_fftr, sndfile, mpg123
 
 
     - ofPASoundStream
 
-        [ofConstants], ofBaseSoundStream, ofTypes, portaudio, ofUtils, ofEvents, ofBaseApp
+        [ofConstants], ofBaseSoundStream, ofTypes, portaudio, ofUtils, [ofEvents], [opBaseApp]
 
 
     - ofRtAudioSoundStream
@@ -309,24 +309,24 @@ videoとsoundもSDLで乗り切れるよね？
 
     - ofSoundStream
 
-        [ofConstants], ofBaseType, ofBaseApp, ofTypes, ofBaseSoundStream, ofAppRunner
+        [ofConstants], ofBaseType, [opBaseApp], ofTypes, ofBaseSoundStream, ofAppRunner
 
 
 + types
 
-    - ofBaseTypes
+    - (ofBaseTypes)
 
-        [ofPoint], ofRectangle, [ofConstants], ofColor, ofMesh, ofPixels, pfMatrix4x4, ofTypes, ofUtils
+        [ofPoint], (ofRectangle), [ofConstants], (ofColor), (ofMesh), (ofPixels), [ofMatrix4x4], ofTypes, ofUtils
 
 
-    - ofColor
+    - (ofColor)
 
         ofMath, [ofConstants]
 
 
     - ofParameters
 
-        ofEvents, ofTypes, ofUtils, ofParameterGroup
+        [ofEvents], ofTypes, ofUtils, ofParameterGroup
 
 
     - ofParametersGroup
@@ -339,14 +339,14 @@ videoとsoundもSDLで乗り切れるよね？
         [ofVec3f]
 
 
-    - ofRectangle
+    - (ofRectangle)
 
         [ofConstants], [ofPoint], [ofLog]
 
 
     - ofTypes
 
-        [ofConstants], ofColor
+        [ofConstants], (ofColor)
 
 
 + utils
@@ -366,9 +366,9 @@ videoとsoundもSDLで乗り切れるよね？
         [ofConstants], ofFileUtils, ofTypes, ofUtils
 
 
-    - ofMatrixStack
+    - (ofMatrixStack)
 
-        [ofConstants], ofRectangle, ofGraphics, [ofMatrix4x4], ofMatrixStack, ofAppBaseWindow, ofFbo
+        [ofConstants], (ofRectangle), ofGraphics, [ofMatrix4x4], (ofMatrixStack), [ofAppBaseWindow], (ofFbo)
 
 
     - [ofNoise] [攻略済み]
@@ -388,7 +388,7 @@ videoとsoundもSDLで乗り切れるよね？
 
     - ofURLFileLoader
 
-        [ofThread], ofEvents, ofFileUtils, ofURLFileLoader, ofAppRunner, ofUtils, Poco/Net/...
+        [ofThread], [ofEvents], ofFileUtils, ofURLFileLoader, ofAppRunner, ofUtils, Poco/Net/...
 
 
     - ofUtils
@@ -405,12 +405,12 @@ videoとsoundもSDLで乗り切れるよね？
 
     - ofDirectShowGrabber
 
-        [ofConstants], ofTexture, ofBaseTypes, ofPixels, videoInput, ofUtils,
+        [ofConstants], (ofTexture), (ofBaseTypes), (ofPixels), videoInput, ofUtils,
 
 
     - ofGstUtils
 
-        [ofConstants], ofBaseTypes, ofPixels, ofTypes, ofEvents, [ofThread], ofUtils, gst, glib, glib-object
+        [ofConstants], (ofBaseTypes), (ofPixels), ofTypes, [ofEvents], [ofThread], ofUtils, gst, glib, glib-object
 
 
     - ofGstVieoGrabber
@@ -445,19 +445,19 @@ videoとsoundもSDLで乗り切れるよね？
 
     - ofQuickTimeGrabber
 
-        ofConstant, ofQtUtils, ofTexture, ofBaseType, ofPixels, ofUtils
+        ofConstant, ofQtUtils, (ofTexture), ofBaseType, (ofPixels), ofUtils
 
 
     - ofQuickTimePlayer
 
-        ofConstant, ofBaseTypes, ofPixels, ofQtUtils, ofUtils, 
+        ofConstant, (ofBaseTypes), (ofPixels), ofQtUtils, ofUtils, 
 
 
     - ofVideoGrabber
 
-        ofConstant, ofTexture, ofBaseTypes, ofPixels, ofTypes, ofxiOSVideoGrabber, ofQuickTimeGrabber, ofQTKitGrabber, ofDirectShowGrabber, ofGstVideoGrabber, ofxAndroidVideoGrabber
+        ofConstant, (ofTexture), (ofBaseTypes), (ofPixels), ofTypes, ofxiOSVideoGrabber, ofQuickTimeGrabber, ofQTKitGrabber, ofDirectShowGrabber, ofGstVideoGrabber, ofxAndroidVideoGrabber
 
 
     - ofVideoPlayer
 
-        [ofConstants], ofTexture, ofBaseTypes, ofTypes, ofGstVideoPlayer, ofQuickTimePlayer, ofQTKitPlayer, ofxiOSVideoPlayer, ofxAndroidVideoPlayer, ofUtils, ofGraphics
+        [ofConstants], (ofTexture), (ofBaseTypes), ofTypes, ofGstVideoPlayer, ofQuickTimePlayer, ofQTKitPlayer, ofxiOSVideoPlayer, ofxAndroidVideoPlayer, ofUtils, ofGraphics

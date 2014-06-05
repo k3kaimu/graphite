@@ -1,0 +1,1306 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Vertex",
+				"VertexSetting"
+			],
+			[
+				"Verte",
+				"VertexInfo	enum"
+			],
+			[
+				"isPa",
+				"isParticularRenderer"
+			],
+			[
+				"set",
+				"setAnchorPoint"
+			],
+			[
+				"toJSON",
+				"toJSONValueImpl"
+			],
+			[
+				"JSON",
+				"JSONValue"
+			],
+			[
+				"hasS",
+				"hasStaticCols"
+			],
+			[
+				"Ma",
+				"MatrixExpression"
+			],
+			[
+				"isAs",
+				"isAbstractMatrix"
+			],
+			[
+				"hasST",
+				"hasStaticCols"
+			],
+			[
+				"mouse",
+				"mouseY	variable"
+			],
+			[
+				"ela",
+				"elapsedTimeAsTotal	function"
+			],
+			[
+				"GLUI",
+				"GL_UNSIGNED_INT"
+			],
+			[
+				"defu",
+				"defaultMajor"
+			],
+			[
+				"stati",
+				"staticCols"
+			],
+			[
+				"static",
+				"staticRows"
+			],
+			[
+				"Element",
+				"ElementType"
+			],
+			[
+				"stat",
+				"staticRows"
+			],
+			[
+				"default",
+				"defaultMajor"
+			],
+			[
+				"has",
+				"hasStaticRows"
+			],
+			[
+				"Cus",
+				"CustomJSONSerialier"
+			],
+			[
+				"toJ",
+				"toJSONValue"
+			],
+			[
+				"fromJ",
+				"fromJSONValue"
+			],
+			[
+				"to",
+				"toJSONValue"
+			],
+			[
+				"isV",
+				"isVFlipped"
+			],
+			[
+				"setupS",
+				"setupScreenOrtho"
+			],
+			[
+				"setup",
+				"setupScreenPerspective"
+			],
+			[
+				"defau",
+				"defaultMethod"
+			],
+			[
+				"push",
+				"pushView"
+			],
+			[
+				"setupSc",
+				"setupScreenOrthoDlg"
+			],
+			[
+				"view",
+				"viewport"
+			],
+			[
+				"isVide",
+				"isVideoPlayer"
+			],
+			[
+				"Iv",
+				"IVideoGrabber	interface"
+			],
+			[
+				"IVi",
+				"IVideoGrabber	interface"
+			],
+			[
+				"rese",
+				"resetAnchor"
+			],
+			[
+				"setAnch",
+				"setAnchorPercent"
+			],
+			[
+				"decl",
+				"declDefOptionalMethod"
+			],
+			[
+				"bott",
+				"bottomLeft"
+			],
+			[
+				"bo",
+				"bottomRight"
+			],
+			[
+				"top",
+				"topRight"
+			],
+			[
+				"Ali",
+				"AlignVert"
+			],
+			[
+				"i",
+				"ignore"
+			],
+			[
+				"sta",
+				"standardize"
+			],
+			[
+				"tar",
+				"tarVertAnchor"
+			],
+			[
+				"ali",
+				"alignToVert"
+			],
+			[
+				"this",
+				"thisHorzAnchor"
+			],
+			[
+				"sc",
+				"scaleFromCenter"
+			],
+			[
+				"snd_mixer_class",
+				"snd_mixer_class_t"
+			],
+			[
+				"Float",
+				"ofFloatPixels"
+			],
+			[
+				"GL_TE",
+				"GL_TEXTURE_2D"
+			],
+			[
+				"from",
+				"fromJSONValueImpl"
+			],
+			[
+				"JSONE",
+				"JSONEnv"
+			],
+			[
+				"Matr",
+				"MatrixEnv"
+			],
+			[
+				"isI",
+				"isInputRange"
+			],
+			[
+				"o",
+				"object"
+			],
+			[
+				"fromJSON",
+				"fromJSONValue"
+			],
+			[
+				"Cu",
+				"CustomJSONConvertor"
+			],
+			[
+				"toJS",
+				"toJSONValueImpl"
+			],
+			[
+				"get",
+				"getNameAsJSONObject"
+			],
+			[
+				"is",
+				"isJSONObjectMember"
+			],
+			[
+				"isJSO",
+				"isJSONObjectMember"
+			],
+			[
+				"JSONOb",
+				"JSONObjectMember"
+			],
+			[
+				"isJSON",
+				"isJSONObjMemberImpl"
+			],
+			[
+				"Json",
+				"JsonEnv"
+			],
+			[
+				"JSn",
+				"JSONValue"
+			],
+			[
+				"pro",
+				"proTest"
+			],
+			[
+				"in",
+				"integer"
+			],
+			[
+				"enforce",
+				"enforceEx"
+			],
+			[
+				"JsonEv",
+				"JsonEnvSetting"
+			],
+			[
+				"Mixin",
+				"MixinDMatrix"
+			],
+			[
+				"ToMatrix",
+				"toMatrixVector"
+			],
+			[
+				"Matri",
+				"MatrixLibrary"
+			],
+			[
+				"inv",
+				"invAmount"
+			],
+			[
+				"p",
+				"property"
+			],
+			[
+				"fromR",
+				"fromRGBAHex"
+			],
+			[
+				"sat",
+				"saturation"
+			],
+			[
+				"sa",
+				"saturation"
+			],
+			[
+				"bri",
+				"brightness"
+			],
+			[
+				"hue",
+				"hueSixRem"
+			],
+			[
+				"hueS",
+				"hueSixCategory"
+			],
+			[
+				"clamp",
+				"clampOp"
+			],
+			[
+				"file",
+				"fileDragEvent"
+			],
+			[
+				"touc",
+				"touchCancelled"
+			],
+			[
+				"tou",
+				"touchUp"
+			],
+			[
+				"before",
+				"beforeApp"
+			],
+			[
+				"Event",
+				"EventManager"
+			],
+			[
+				"Even",
+				"EventManager"
+			],
+			[
+				"pre",
+				"preFunc"
+			],
+			[
+				"func",
+				"funcName"
+			],
+			[
+				"bre",
+				"beforeApp"
+			],
+			[
+				"im",
+				"imgFileName"
+			],
+			[
+				"readL",
+				"readLngHemisphere"
+			],
+			[
+				"readLa",
+				"readLatHemisphere"
+			],
+			[
+				"read",
+				"readLatitude"
+			],
+			[
+				"isIn",
+				"isInputRange"
+			],
+			[
+				"take",
+				"takeExactly"
+			],
+			[
+				"split",
+				"splitAfter"
+			],
+			[
+				"m",
+				"merge"
+			],
+			[
+				"isMatrix",
+				"isMatrixVector"
+			],
+			[
+				"write",
+				"writeToConsole"
+			],
+			[
+				"wr",
+				"writeToConsole"
+			],
+			[
+				"walk",
+				"walker"
+			],
+			[
+				"max",
+				"maxLen"
+			],
+			[
+				"re",
+				"remain"
+			],
+			[
+				"Room",
+				"RoomInfo"
+			],
+			[
+				"gen",
+				"genWeight"
+			],
+			[
+				"en",
+				"extendFloor"
+			],
+			[
+				"ri",
+				"right"
+			],
+			[
+				"Hex",
+				"HexMap"
+			],
+			[
+				"Roo",
+				"RoomInfo"
+			],
+			[
+				"Mao",
+				"MapInfo"
+			],
+			[
+				"string",
+				"streamingLines"
+			],
+			[
+				"as",
+				"assumeURLEncoded"
+			],
+			[
+				"filename",
+				"filenames"
+			],
+			[
+				"assume",
+				"assumeUnique"
+			],
+			[
+				"si",
+				"signedPostImage"
+			],
+			[
+				"form",
+				"formattedWrite"
+			],
+			[
+				"sig",
+				"signedCall"
+			],
+			[
+				"signed",
+				"signedPostImage"
+			],
+			[
+				"con",
+				"consumer_impl"
+			],
+			[
+				"cons",
+				"consumer_impl"
+			],
+			[
+				"consu",
+				"consumerToken"
+			],
+			[
+				"veri",
+				"verifyCredentials"
+			],
+			[
+				"access",
+				"accessTokens"
+			],
+			[
+				"aut",
+				"authorize"
+			],
+			[
+				"ver",
+				"verifier"
+			],
+			[
+				"de",
+				"decrypt"
+			],
+			[
+				"crypt",
+				"cryptRnd"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "source/graphite/types/basetypes.d",
+			"settings":
+			{
+				"buffer_size": 1802,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "source/graphite/r2/canvas.d",
+			"settings":
+			{
+				"buffer_size": 1110,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "source/graphite/r2/interfaces.d",
+			"settings":
+			{
+				"buffer_size": 230,
+				"line_ending": "Windows",
+				"name": "module graphite.r2.interfaces;"
+			}
+		},
+		{
+			"file": "/C/Users/fallingfall/Desktop/d_intro.md",
+			"settings":
+			{
+				"buffer_size": 6260,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/DKit/D.sublime-build",
+	"command_palette":
+	{
+		"height": 219.0,
+		"selected_items":
+		[
+			[
+				"Dki",
+				"DKit: Restart DCD Autocompletion Server"
+			],
+			[
+				"dub",
+				"Build: dub"
+			],
+			[
+				"Set Syn",
+				"Set Syntax: D"
+			],
+			[
+				"Set Syntax: D",
+				"Set Syntax: D"
+			],
+			[
+				"Syntax",
+				"Set Syntax: D"
+			],
+			[
+				"Package Control: Install",
+				"Package Control: Install Package"
+			],
+			[
+				"Subl",
+				"SublimeLinter: Show All Errors"
+			],
+			[
+				"togg",
+				"SublimeLinter: Toggle Linter"
+			],
+			[
+				"DKit",
+				"DKit: Restart DCD Autocompletion Server"
+			],
+			[
+				"Dkit",
+				"DKit: Restart DCD Autocompletion Server"
+			],
+			[
+				"DK",
+				"DKit: Restart DCD Autocompletion Server"
+			],
+			[
+				"db",
+				"Build: Build"
+			],
+			[
+				"D",
+				"DKit: Restart DCD Autocompletion Server"
+			],
+			[
+				"",
+				"Build: Run"
+			],
+			[
+				"Package Control: up",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"Package Control: remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"Package Control: re",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: e",
+				"Package Control: Enable Package"
+			],
+			[
+				"Package Control: Ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: install",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control:ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: i",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: di",
+				"Package Control: Disable Package"
+			],
+			[
+				"Package Control: in",
+				"Package Control: Install Package"
+			],
+			[
+				"Export",
+				"HTML Export: Current File"
+			],
+			[
+				"HT",
+				"HTML Export: Current File"
+			],
+			[
+				"Insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Snippet: ",
+				"Snippet: Lorem ipsum"
+			],
+			[
+				"Instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: In",
+				"Package Control: Install Package"
+			],
+			[
+				"bui",
+				"Build: Build"
+			],
+			[
+				"consol",
+				"Set Syntax: R Console"
+			]
+		],
+		"width": 416.0
+	},
+	"console":
+	{
+		"height": 125.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"import urllib.request,os; pf = ‘Package Control.sublime-package’; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); open(os.path.join(ipp, pf), ‘wb’).write(urllib.request.urlopen( ‘http://sublime.wbond.net/’ + pf.replace(‘ ‘,’%20′)).read())"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/fallingfall/Dropbox/Github/ceraphite/package.json",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/package.json",
+		"/E/Virtual Machines/ubuntu_x64/shared/ode/Makefile.am",
+		"/E/Virtual Machines/ubuntu_x64/shared/ode/Makefile.in",
+		"/E/Virtual Machines/ubuntu_x64/shared/ode/README",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/gl/fbo.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/gl/glprogrammablerenderer.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/package.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/quaternion.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/types/basetypes.d",
+		"/C/Users/fallingfall/AppData/Roaming/Sublime Text 3/Packages/User/SublimeLinter.sublime-settings",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/utils/channel.d",
+		"/C/Users/fallingfall/AppData/Roaming/Sublime Text 3/Packages/DKit/DKit.sublime-commands",
+		"/C/Users/fallingfall/AppData/Roaming/Sublime Text 3/Packages/DKit/D.sublime-build",
+		"/C/Users/fallingfall/AppData/Roaming/Sublime Text 3/Packages/D/D.tmLanguage",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/utils/package.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/utils/typeclass.d",
+		"/C/Users/fallingfall/Desktop/D/D.tmLanguage",
+		"/C/Users/fallingfall/Desktop/D/Comments.tmPreferences",
+		"/C/Users/fallingfall/Desktop/D/constant.sublime-snippet",
+		"/C/Users/fallingfall/Desktop/D.sublime-package",
+		"/C/Users/fallingfall/Desktop/D.zip",
+		"/C/Users/fallingfall/Dropbox/Sublime Text 2/Data/Packages/D/D.tmLanguage",
+		"/C/Users/fallingfall/AppData/Roaming/Sublime Text 3/Packages/SublimeLinter-contrib-dmd/linter.py",
+		"/C/Users/fallingfall/Dropbox/pgfile/foo.d",
+		"/C/Users/fallingfall/AppData/Roaming/Sublime Text 3/Packages/SublimeLinter-contrib-dmd/.sublimelinterrc",
+		"/C/Users/fallingfall/AppData/Roaming/Sublime Text 3/Packages/SublimeLinter-contrib-dmd/messages.json",
+		"/C/Users/fallingfall/AppData/Roaming/Sublime Text 3/Packages/SublimeLinter-contrib-dmd/messages/install.txt",
+		"/C/D/dmd2/src/druntime/src/object_.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/linear.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/utils/json.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/twitter/api.d",
+		"/C/Users/fallingfall/Dropbox/Sublime Text 2/Data/Packages/D/D.sublime-build",
+		"/C/Users/fallingfall/Dropbox/Sublime Text 2/Data/Packages/User/RDMDUnittest.sublime-build",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/types/color.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/utils/constants.d",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/graphics/ofImage.cpp",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/graphics/ofImage.h",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/3d/of3dPrimitives.h",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/graphics/path.d",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/gl/ofGLUtils.h",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/gl/glutils.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/gl/glapi.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/deimos/gl/glcorearb.d",
+		"/C/D/dmd2/src/phobos/std/conv.d",
+		"/C/D/dmd2/src/phobos/std/json.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/json.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/0x00428900 in nothrow @safe void graphite.math.linear.DMatrix!(float).DMatrix.opAssign!(int[][]).opAssign(ref int[][]) at C:/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/linear.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/0x00428682 in D8graphite4math6linear14__T7DMatrixTfZ at C:/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/linear.d",
+		"/C/Users/fallingfall/Dropbox/Sublime Text 2/Data/Packages/User/dmd-unittest.sublime-build",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/core.exception.AssertError@graphite.math.linear",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/math/linear.d-mixin-1556",
+		"/C/Users/fallingfall/Dropbox/Github/d-manual/pandoc.d",
+		"/C/Users/fallingfall/Dropbox/Github/d-manual/associative_array.md",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/package.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/r3/mesh.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/gl/texture.d",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/utils/ofConstants.h",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/graphics/image.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/r3/primitives.d",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/3d/of3dPrimitives.cpp",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/gl/vbomesh.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/app/baseapp.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/app/appbasewindow.d",
+		"/C/D/dmd2/src/phobos/std/file.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/events/eventutils.d",
+		"/C/D/dmd2/src/phobos/std/variant.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/events/events.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/events/package.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/r3/package.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/graphics/package.d",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/gl/ofVbo.h",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/gl/ofVboMesh.h",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/gl/vbo.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/gl/package.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/deimos/cl/cl_platform.d",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/graphics/ofPath.h",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/graphics/ofPath.cpp",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/dsp/package.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/files.md",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/utils/ofUtils.h",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/utils/ofUtils.cpp",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/types/types.d",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/deimos/tesselator.d",
+		"/C/Users/fallingfall/Dropbox/pgfile/cltest.d",
+		"/C/Users/fallingfall/Dropbox/mylibrary/cl4d/_sampleForeach.d",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/gl/ofFbo.cpp",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/gl/ofFbo.h",
+		"/C/Users/fallingfall/Dropbox/Github/graphite/source/graphite/utils/matrixstack.d",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/app/ofAppBaseWindow.h",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/app/ofBaseApp.h",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/gl/ofGLUtils.cpp",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/3d/ofMesh.h",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/3d/ofMesh.cpp",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/app/ofAppGLFWWindow.cpp",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/gl/ofGLProgrammableRenderer.cpp",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/gl/ofGLProgrammableRenderer.h",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/utils/ofMatrixStack.cpp",
+		"/C/Users/fallingfall/Dropbox/openframeworkds/libs/openFrameworks/utils/ofMatrixStack.h",
+		"/C/Users/fallingfall/Dropbox/grad_study/gnss-sdrlib/src/util/range.d",
+		"/C/Users/fallingfall/Dropbox/grad_study/gnss-sdrlib/src/util/serialize.d",
+		"/C/Users/fallingfall/Dropbox/grad_study/gnss-sdrlib/src/util/simd.d",
+		"/C/Users/fallingfall/Dropbox/grad_study/gnss-sdrlib/src/util/trace.d",
+		"/C/Users/fallingfall/Dropbox/grad_study/gnss-sdrlib/src/calcTEC.d",
+		"/C/Users/fallingfall/Dropbox/grad_study/gnss-sdrlib/src/actors.d",
+		"/C/Users/fallingfall/Dropbox/Github/cppwd/cppwd.d",
+		"/C/Users/fallingfall/Dropbox/grad_study/gnss-sdrlib/src/util/locker.d",
+		"/C/Users/fallingfall/Dropbox/grad_study/gnss-sdrlib/src/util/numeric.d",
+		"/C/Users/fallingfall/SkyDrive/卒研/00683430.13o",
+		"/C/Users/fallingfall/Desktop/IrrLua/msvc/IrrLua/IrrLua_DLL.cpp",
+		"/C/Users/fallingfall/Desktop/IrrLua/msvc/IrrLua/IrrLua_DLL.h",
+		"/C/Users/fallingfall/Desktop/IrrLua/msvc/tolua++/tolua++.cpp",
+		"/C/Users/fallingfall/Desktop/IrrLua/msvc/LuaCompiler/LuaCompiler.cpp",
+		"/C/Users/fallingfall/Desktop/IrrLua/msvc/Lua/Lua.cpp",
+		"/C/Users/fallingfall/Desktop/IrrLua/msvc/IrrLua/IrrLua.vcproj",
+		"/C/Users/fallingfall/Desktop/Bindenlicht-0_1_8-Win32/TestMovement.java",
+		"/C/Users/fallingfall/Desktop/IrrLua/examples/01.HelloWorld.lua",
+		"/C/Users/fallingfall/Desktop/IrrLua/include/IrrLua.h",
+		"/C/Users/fallingfall/Desktop/IrrLua/include/IrrLuaIMesh.h",
+		"/C/Users/fallingfall/Desktop/IrrLua/include/IrrLuaAux.h",
+		"/C/Users/fallingfall/Desktop/IrrLua/msvc/tolua++/tolua++.vcproj",
+		"/C/Users/fallingfall/Desktop/Bindenlicht-0_1_8-Win32/bindenlicht/AABBox3df.class",
+		"/C/Users/fallingfall/Desktop/irr-0.2/irr.cpp",
+		"/C/Users/fallingfall/Desktop/irr-0.2/extern.rb",
+		"/C/Users/fallingfall/Desktop/irr-0.2/extern.h",
+		"/C/Users/fallingfall/Desktop/irr-0.2/irr.h",
+		"/C/Users/fallingfall/Desktop/irr-0.2/irr.i",
+		"/C/Users/fallingfall/Desktop/irr-0.2/constants.h"
+	],
+	"find":
+	{
+		"height": 26.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\graphite\\source",
+			"C:\\Users\\fallingfall\\Dropbox\\openframeworkds\\libs\\openFrameworks",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\graphite\\source",
+			"C:\\Users\\fallingfall\\Dropbox\\openframeworkds\\libs\\openFrameworks",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\graphite\\source",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\alsa\\c",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\alsa\\c\\sound",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\alsa\\c",
+			"C:\\Users\\fallingfall\\Dropbox\\openframeworkds\\libs\\openFrameworks",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\graphite",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\dranges",
+			"C:\\Users\\fallingfall\\Dropbox\\openframeworkds\\libs\\openFrameworks",
+			"C:\\Users\\fallingfall\\Dropbox\\grad_study\\gnss-sdrlib\\src",
+			"C:\\Users\\fallingfall\\Dropbox\\gnss-sdrlib\\source32_vs2010",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\d-manual",
+			"C:\\Users\\fallingfall\\Dropbox\\grad_study\\gnss-sdrlib\\src",
+			"C:\\Users\\fallingfall\\Dropbox\\Github\\boostrap",
+			"C:\\Users\\fallingfall\\Dropbox\\dgnsstec\\gnss-sdrlib\\src",
+			"C:\\Users\\fallingfall\\Google ドライブ\\dgnsstec\\gnss-sdrlib\\src",
+			"C:\\Users\\fallingfall\\Dropbox\\gnss-sdrlib\\gnss-sdrlib_64bit\\src",
+			"C:\\Users\\fallingfall\\Dropbox\\gnss-sdr\\src",
+			"C:\\Users\\fallingfall\\Dropbox\\sdrseminar\\sdrseminar\\src",
+			"C:\\mylibrary\\cinderD\\cindercpp",
+			"C:\\mylibrary\\cinderD\\cindercpp\\src",
+			"C:\\mylibrary\\dranges",
+			"C:\\D\\lib\\src\\FANN-2.2.0-Source\\src",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"	",
+			"Writer",
+			"pos",
+			"Mutex",
+			"const",
+			"boolean",
+			".reference",
+			"toJSONValue",
+			"fromJSONValue",
+			"ref_",
+			"reference",
+			"SMatrix._buffer",
+			"opAssign",
+			"template",
+			"isNarrowMatrix",
+			"isScalar",
+			"isNarrowMatrix",
+			"staticRows",
+			"hasStaticRows",
+			"hasStaticCols",
+			"L.cols",
+			"R.cols",
+			"R.rows",
+			"R",
+			"isNarrowMatrix",
+			"string, int",
+			"ofOrientation",
+			"ofPoint",
+			"ofDragInfo",
+			"OF_PRIMITIVE_TRIANGLE_STRIP",
+			"OF_MESH_",
+			"OF_PRIMITIVE_",
+			"PrimitiveMode",
+			"ofVboMesh",
+			" Color ",
+			"Color ",
+			"Color",
+			"ofRectMode",
+			"ofFillFlag",
+			"ofMatrix4x4",
+			"ofOrientation",
+			"ofRectangle",
+			"OF_IMAGE_FORMAT_",
+			"OF_IMAGE_QUALITY_",
+			"ofImage",
+			"of3dPrimitive",
+			"GL_FRAMEBUFFER_INCOMPLETE",
+			"GL_FRAMEBUFFER_INCOMPLETE_FORMATS",
+			"GL_FRAMEBUFFER_INCOMPLETE",
+			"GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS",
+			"GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT",
+			"GL_FRAMEBUFFER",
+			"GL_FRAMEBUFFER_INCOMPLETE",
+			"GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS",
+			"GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT",
+			"INCOMPLETE_DIMENSIONS",
+			"GL_FRAMEBUFFER",
+			"GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS",
+			"GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT",
+			"ofPrimitiveMode",
+			"ofPolyRenderMode",
+			"ofImageType",
+			"TYPE",
+			"type",
+			"of3DPrimitive",
+			"of3DPrimitives",
+			"ofPolyRenderMode",
+			"PolyRenderMode",
+			"#define",
+			"typedef",
+			"isVersion",
+			"unsigned int",
+			"property",
+			"ofResetElapsedTimeCounter",
+			"ofNextPow2",
+			"ofGLProgrammableRenderer",
+			"[[opBaseApp]]",
+			"ofBaseApp",
+			"ofMatrixStack",
+			"ofMatrix4x4",
+			"tesselator",
+			"ofPolyline",
+			"ofMesh",
+			"ofEventUtils",
+			"ofEvents",
+			"ofFbo",
+			"ofShader",
+			"ofTexture",
+			"ofBaseTypes",
+			"ofPixels",
+			"ofColor",
+			"ofRectangle",
+			"ofAppBaseWindow",
+			"ofBaseApp",
+			"ofPolyRenderMode",
+			"virtual ",
+			"EventArgs",
+			"virtual ",
+			"#define",
+			"const",
+			"ofVec3f",
+			"GLProgrammableRenderer",
+			"ofMesh",
+			"ofHandednessType",
+			"Matrix4x4",
+			"ofOrientation",
+			"ofRectangle",
+			"ofMatrix4x4",
+			"ofMatrixMode",
+			"ofPrimitiveMode",
+			"PrimitiveMode",
+			"ofPrimitiveMode",
+			"ofColor",
+			"Primitive",
+			"vector<FloatColor>",
+			"vector<Vec3f>",
+			"ofMeshFace",
+			"virtual ",
+			"enableColors",
+			"const ref ",
+			"vector<",
+			"ofFloatColor",
+			"ofIndexType",
+			"ofVec2f",
+			" size_t idx ",
+			"int index",
+			"int ",
+			"int"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"struct",
+			"\\n",
+			"bool",
+			"std::size_t",
+			"ubyte_t",
+			"ubyte",
+			"ushort_t",
+			"int_t",
+			"unittest Failure",
+			"scope(success) {writefln(\"Unittest Success :%s(%s)\", __FILE__, __LINE__); stdout.flush();}"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "source/graphite/types/basetypes.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1802,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								295,
+								295
+							]
+						],
+						"settings":
+						{
+							"origin_encoding": "ASCII",
+							"syntax": "Packages/D/D.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "source/graphite/r2/canvas.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1110,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								115,
+								115
+							]
+						],
+						"settings":
+						{
+							"origin_encoding": "ASCII",
+							"syntax": "Packages/D/D.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "source/graphite/r2/interfaces.d",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 230,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								227,
+								227
+							]
+						],
+						"settings":
+						{
+							"auto_name": "module graphite.r2.interfaces;",
+							"origin_encoding": "UTF-8",
+							"syntax": "Packages/D/D.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/Users/fallingfall/Desktop/d_intro.md",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6260,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3550,
+								3550
+							]
+						],
+						"settings":
+						{
+							"origin_encoding": "UTF-8",
+							"syntax": "Packages/Markdown/Markdown.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3601.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 30.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.466360856269,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 28.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 94.0
+	},
+	"project": "sublime_proj.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"gtime",
+				"graphite/deimos/ode/timer.d"
+			],
+			[
+				"p",
+				"cl4d/platform.d"
+			],
+			[
+				"a",
+				"cl4d/algorithm.d"
+			],
+			[
+				"test",
+				"/C/d_programming/_tetset.d"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 171.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,5 +1,7 @@
 module graphite.gl.glapi;
 
+public import graphite.deimos.gl.glcorearb;
+
 import graphite.deimos.glfw.glfw3;
 import graphite.deimos.gl.glcorearb;
 

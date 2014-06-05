@@ -95,7 +95,7 @@ real toRad(real deg) pure nothrow @safe
 
 /// ditto
 struct Quaternion(S)
-if(isScalar!S)
+if(isNotVectorOrMatrix!S)
 {
     this(E)(in Quaternion!E q)
     if(is(E : S))
@@ -138,9 +138,9 @@ if(isScalar!S)
 
 
     @property
-    auto v()() pure nothrow @safe inout
+    auto v() pure nothrow @safe inout
     {
-        return _vec4.reference.swizzle.bcd;
+        return _vec4.stackRef.swizzle.bcd;
     }
 
 

@@ -1,6 +1,6 @@
 module graphite.r2.canvas;
 
-
+version(none):
 struct PNGCanvas
 {
     ~this()
@@ -9,9 +9,9 @@ struct PNGCanvas
     }
 
 
-    RefCounted!Writer writer() @property
+    RefCounted!CairoRenderer writer() @property
     {
-        return RefCounted!Writer(_surface);
+        return RefCounted!CairoRenderer(_surface);
     }
 
 
@@ -36,9 +36,9 @@ struct DataCanvas(CanvasDataType type)
     }
 
 
-    RefCounted!Writer writer() @property
+    RefCounted!CairoRenderer writer() @property
     {
-        return RefCounted!Writer(_surface);
+        return RefCounted!CairoRenderer(_surface);
     }
 
 
@@ -66,9 +66,7 @@ struct DataCanvas(CanvasDataType type)
 }
 
 
-struct 
-
-struct Writer
+struct CairoRenderer
 {
     ~this()
     {

@@ -1,6 +1,7 @@
 module graphite.app.appbasewindow;
 
 import graphite.app.baseapp;
+import graphite.utils.constants;
 
 import graphite.types;
 
@@ -17,7 +18,7 @@ abstract class AppBaseWindow{
 
     void setupOpenGL(int w, int h, int screenMode) {}
     void initializeWindow() {}
-    void runAppViaInfiniteLoop(ofBaseApp * appPtr) {}
+    void runAppViaInfiniteLoop(BaseApp appPtr) {}
 
     void hideCursor() {}
     void showCursor() {}
@@ -25,12 +26,12 @@ abstract class AppBaseWindow{
     void    setWindowPosition(int x, int y) {}
     void    setWindowShape(int w, int h) {}
 
-    ofPoint getWindowPosition() {return ofPoint(); }
-    ofPoint getWindowSize(){return ofPoint(); }
-    ofPoint getScreenSize(){return ofPoint(); }
+    Point getWindowPosition() {return Point(); }
+    Point getWindowSize(){return Point(); }
+    Point getScreenSize(){return Point(); }
 
-    void            setOrientation(ofOrientation orientation){ }
-    ofOrientation   getOrientation(){ return OF_ORIENTATION_DEFAULT; }
+    void            setOrientation(Orientation orientation){ }
+    Orientation   getOrientation(){ return Orientation.default_; }
     bool    doesHWOrientation(){return false;}
 
     //this is used by ofGetWidth and now determines the window width based on orientation

@@ -1,8 +1,20 @@
 module graphite.gl.shader;
 
+import graphite.deimos.gl.glcorearb;
+import graphite.gl.glapi;
+
+import std.typecons;
+import std.exception;
+import std.stdio;
+import std.string;
+import std.file;
+import std.algorithm;
+import std.array;
+
+
 alias VertexShader = typeof(vertexShader());
 alias FragmentShader = typeof(fragmentShader());
-alias GeometryShader = typeof(geometryShader());
+alias GeometryShader = typeof(geometryShader(0, 0));
 alias Shader = typeof(shader());
 
 
@@ -26,20 +38,21 @@ enum ShaderType : GLenum
 void compileShader(ShaderType type)(GLuint shader, string src)
 {
     const(char)* cstr = src.toStringz();
-    gll!glShaderSource(shader, 1, &cstr, null);
-    gll!glCompileShader(shader);
+
+    gl.ShaderSource(shader, 1, &cstr, null);
+    gl.CompileShader(shader);
 
     GLint result = GL_FALSE;
-    gll!glGetShaderiv(shader, GL_COMPILE_STATUS, &result);
+    gl.GetShaderiv(shader, GL_COMPILE_STATUS, &result);
 
     string pullLog()
     {
         int len = void;
-        gll!glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
+        gl.GetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
 
         if(len > 0){
             char[] msg = new char[len];
-            gll!glGetShaderInfoLog(shader, len, null, msg.ptr);
+            gl.GetShaderInfoLog(shader, len, null, msg.ptr);
             return msg.assumeUnique();
         }else
             return "";
@@ -59,7 +72,7 @@ auto vertexShader() @property
         ~this()
         {
             if(_shader)
-                gll!glDeleteShader(_shader);
+               gl.DeleteShader(_shader);
         }
 
 
@@ -75,27 +88,45 @@ auto vertexShader() @property
         }
 
 
+        static
+        auto fromSrc(string src)
+        {
+            auto frag = newShader();
+            frag._shader.compileShader!(ShaderType.vertex)(src);
+
+            return frag;
+        }
+
+
+        static
+        auto fromFile(File file)
+        {
+            return fromSrc(file.name.readText());
+        }
+
+
+        static
+        auto newShader()
+        {
+            return RefCounted!VertexShaderImpl(enforce(gl.CreateShader(GL_VERTEX_SHADER), "failed creating fragment shader"));
+        }
+
+
       private:
         GLuint _shader;
     }
 
 
-    return RefCounted!VertexShaderImpl(enforce(gll!glCreateShader(GL_VERTEX_SHADER), "failed creating vertex shader"));
+    return VertexShaderImpl.newShader();
 }
 
 
-auto vertexShader(string src)
+auto vertexShaderFromSrc(string src)
 {
     auto vert = vertexShader();
     vert._shader.compileShader!(ShaderType.vertex)(src);
 
     return vert;
-}
-
-
-auto vertexShader(File file)
-{
-    return vertexShader(file.name.readText());
 }
 
 
@@ -106,7 +137,7 @@ auto fragmentShader() @property
         ~this()
         {
             if(_shader)
-                gll!glDeleteShader(_shader);
+                gl.DeleteShader(_shader);
         }
 
 
@@ -122,44 +153,53 @@ auto fragmentShader() @property
         }
 
 
+        static
+        auto fromSrc(string src)
+        {
+            auto frag = newShader();
+            frag._shader.compileShader!(ShaderType.fragment)(src);
+            
+            return frag;
+        }
+
+
+        static
+        auto fromFile(File file)
+        {
+            return fromSrc(file.name.readText());
+        }
+
+
+        static
+        auto newShader()
+        {
+            return RefCounted!FragmentShaderImpl(enforce(gl.CreateShader(GL_FRAGMENT_SHADER), "failed creating fragment shader"));
+        }
+
+
       private:
         GLuint _shader;
     }
 
 
-    return RefCounted!FragmentShaderImpl(enforce(gll!glCreateShader(GL_FRAGMENT_SHADER), "failed creating fragment shader"));
+    return FragmentShaderImpl.newShader();
 }
 
 
-auto fragmentShader(string src)
-{
-    auto frag = fragmentShader();
-    frag._shader.compileShader!(ShaderType.fragment)(src);
-
-    return frag;
-}
-
-
-auto fragmentShader(File file)
-{
-    return return fragmentShader(file.name.readText());
-}
-
-
-auto geometryShader(GLenum intputType, GLenum outputType) @property
+auto geometryShader(GLenum inputType, GLenum outputType) @property
 in{
-    assert(![GL_POINTS, GL_LINES, GL_LINES_ADJACENCY, GL_TRAIANGLES, GL_TRAIANGLES_ADJACENCY]
+    assert(![GL_POINTS, GL_LINES, GL_LINES_ADJACENCY, GL_TRIANGLES, GL_TRIANGLES_ADJACENCY]
            .find(inputType).empty);
     assert(![GL_POINTS, GL_LINE_STRIP, GL_TRIANGLE_STRIP]
-           .find(inputType).empty);
+           .find(outputType).empty);
 }
 body{
-    static struct GeometryShader
+    static struct GeometryShaderImpl
     {
         ~this()
         {
             if(_shader)
-                gll!glDeleteShader(_shader);
+                gl.DeleteShader(_shader);
         }
 
 
@@ -171,7 +211,7 @@ body{
 
         GLuint glShader() const @property
         {
-            return _shader
+            return _shader;
         }
 
 
@@ -203,7 +243,7 @@ body{
         GLint maxOutputVertN() @property
         {
             GLint vertN;
-            glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &vertN);
+            gl.GetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &vertN);
             return vertN;
         }
 
@@ -212,9 +252,32 @@ body{
         GLint maxOutputCompN() @property
         {
             GLint comp;
-            glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_COMPONENTS, &comp);
+            gl.GetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &comp);
             return comp;
         }
+
+
+        static
+        auto newShader(GLenum inputType, GLenum outputType)
+        {
+            return RefCounted!GeometryShaderImpl(enforce(gl.CreateShader(GL_GEOMETRY_SHADER), "failed creating fragment shader"), inputType, outputType);
+        }
+
+
+        static
+        auto fromSrc(GLenum inputType, GLenum outputType, string src)
+        {
+            auto dst = newShader(inputType, outputType);
+            dst.glShader.compileShader!(ShaderType.geometry)(src);
+        }
+
+
+        static
+        auto fromFile(GLenum inputType, GLenum outputType, File file)
+        {
+            return fromSrc(inputType, outputType, file.name.readText());
+        }
+
 
       private:
         GLuint _shader;
@@ -222,20 +285,7 @@ body{
     }
 
 
-    auto g = RefCounted!GeometryShader(enforce(gll!glCreateShader(GL_GEOMETRY_SHADER), "failed creating fragment shader"), inputType, outputType, outVertN);
-}
-
-
-auto geometryShader(string src, GLenum inputType, GLenum outputType)
-{
-    auto geom = geometryShader(inputType, outputType);
-    geom.compileShader!(ShaderType.geometry)(src);
-}
-
-
-auto geometryShader(File file, GLenum inputType, GLenum outputType)
-{
-    return geometryShader(file.name.readText(), inputType, outputType);
+    return GeometryShaderImpl.newShader(inputType, outputType);
 }
 
 
@@ -247,7 +297,7 @@ auto shader() @property
         ~this()
         {
             if(_program)
-                gll!glDeleteProgram(_program);
+                gl.DeleteProgram(_program);
         }
 
 
@@ -282,30 +332,30 @@ auto shader() @property
         {
             foreach(i, e; varyings){
                 const(char)* cstr = e.toStringz();
-                gll!glTransformFeedbackVeryings(_program, 1, &cstr, GL_SEPARETE_ATTRIBS);
+                gl.TransformFeedbackVaryings(_program, 1, &cstr, GL_SEPARATE_ATTRIBS);
             }
 
             enforce(_vert.isLoaded);
             enforce(_frag.isLoaded);
 
-            gll!glAttachShader(program, _vert);
-            gll!glAttachShader(program, _frag);
+            gl.AttachShader(_program, _vert.glShader);
+            gl.AttachShader(_program, _frag.glShader);
 
             if(_geom.isLoaded)
-                gll!glAttachShader(program, _geom);
+                gl.AttachShader(_program, _geom.glShader);
 
-            gll!glLinkProgram(program);
+            gl.LinkProgram(_program);
 
 
             string programInfoLog()
             {
                 GLsizei bufSize;
-                glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufSize);
+                gl.GetProgramiv(_program, GL_INFO_LOG_LENGTH, &bufSize);
 
                 if(bufSize > 1){
                     char[] infoLog = new char[bufSize];
                     GLsizei len;
-                    glGetProgramInfoLog(program, bufSize, &len, infoLog.ptr);
+                    gl.GetProgramInfoLog(_program, bufSize, &len, infoLog.ptr);
                     return infoLog.assumeUnique();
                 }else
                     return "";
@@ -313,7 +363,7 @@ auto shader() @property
 
 
             GLint status;
-            glGetProgramiv(program, GL_LINK_STATUS, &status);
+            gl.GetProgramiv(_program, GL_LINK_STATUS, &status);
             enforce(status == GL_TRUE, programInfoLog());
 
             debug(Shader) logger!Shader.writeln!"verbose"(programInfoLog);
@@ -323,7 +373,7 @@ auto shader() @property
 
         bool isLoaded() const @property
         {
-            return _isLinked();
+            return _isLinked;
         }
 
 
@@ -347,31 +397,31 @@ auto shader() @property
 
         void begin(){
             enforce(_isLinked, "couldn't begin, shader not loaded");
-            gll!glUseProgram(program);
-            if(auto renderer = programmableRenderer)
-                renderer.begin(this);
+            gl.UseProgram(_program);
+            //if(auto renderer = programmableRenderer)
+            //    renderer.begin(this);
         }
 
 
         void end(){
-            if(_isLinked){
-                if(auto renderer = programmableRenderer)
+            //if(_isLinked){
+            //    if(auto renderer = programmableRenderer)
 
-            }
+            //}
         }
         
 
       private:
         GLuint _program;
         bool _isLinked;
-        VertexShader _vert;
-        FragmentShader _frag;
-        GeometryShader _geom;
+        Nullable!VertexShader _vert;
+        Nullable!FragmentShader _frag;
+        Nullable!GeometryShader _geom;
     }
 
 
-    return RefCounted!ShaderImpl(enforce(gll!glCreateProgram()));
+    return RefCounted!ShaderImpl(enforce(gl.CreateProgram()));
 }
 
 
-auto shader(VertexShader vert, FragmentShader frag, GeometryShader geom, string[] varyings)
+//auto shader(VertexShader vert, FragmentShader frag, GeometryShader geom, string[] varyings)

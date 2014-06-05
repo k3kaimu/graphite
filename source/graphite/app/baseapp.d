@@ -1,10 +1,13 @@
 module graphite.app.baseapp;
 
+import std.variant;
+
 import graphite.types.point,
        graphite.events,
        graphite.types.basetypes;
 
-abstract class BaseApp : ISoundInput, ISoundOutput
+
+abstract class BaseApp/* : ISoundInput, ISoundOutput*/
 {
     this()
     {
@@ -26,8 +29,8 @@ abstract class BaseApp : ISoundInput, ISoundOutput
     void mousePressed( int x, int y, int button ){}
     void mouseReleased(int x, int y, int button ){}
     
-    void dragEvent(ofDragInfo dragInfo) { }
-    void gotMessage(ofMessage msg){ }
+    void dragEvent(DragInfo dragInfo) { }
+    void gotMessage(string msg){ }
 
     void windowEntry ( int state ) { }
     
@@ -46,36 +49,36 @@ abstract class BaseApp : ISoundInput, ISoundOutput
         exit();
     }
 
-    void windowResized(ref ResizeInfo resize){
+    void windowResized(ref ResizeEventInfo resize){
         windowResized(resize.width,resize.height);
     }
 
-    void keyPressed( ref KeyInfo key ){
+    void keyPressed( ref KeyEventInfo key ){
         keyPressed(key.key);
     }
-    void keyReleased( ref KeyInfo key ){
+    void keyReleased( ref KeyEventInfo key ){
         keyReleased(key.key);
     }
 
-    void mouseMoved( ref MouseInfo mouse ){
-        mouseX=mouse.x;
-        mouseY=mouse.y;
-        mouseMoved(mouse.x,mouse.y);
+    void mouseMoved( ref MouseEventInfo mouse ){
+        mouseX = Mouse.x;
+        mouseY = Mouse.y;
+        mouseMoved(mouseX, mouseY);
     }
     void mouseDragged( ref MouseEventInfo mouse ){
-        mouseX=mouse.x;
-        mouseY=mouse.y;
-        mouseDragged(mouse.x,mouse.y,mouse.button);
+        mouseX = Mouse.x;
+        mouseY = Mouse.y;
+        mouseDragged(mouseX, mouseY, mouse.button);
     }
     void mousePressed( ref MouseEventInfo mouse ){
-        mouseX=mouse.x;
-        mouseY=mouse.y;
-        mousePressed(mouse.x,mouse.y,mouse.button);
+        mouseX = Mouse.x;
+        mouseY = Mouse.y;
+        mousePressed(mouseX, mouseY, mouse.button);
     }
     void mouseReleased(ref MouseEventInfo mouse){
-        mouseX=mouse.x;
-        mouseY=mouse.y;
-        mouseReleased(mouse.x,mouse.y,mouse.button);
+        mouseX = Mouse.x;
+        mouseY = Mouse.y;
+        mousePressed(mouseX, mouseY, mouse.button);
     }
     void windowEntry(ref EntryEventInfo entry){
         windowEntry(entry.state);
@@ -83,7 +86,7 @@ abstract class BaseApp : ISoundInput, ISoundOutput
     void dragged(ref DragInfo drag){
         dragEvent(drag);
     }
-    void messageReceived(ref MessageInfo message){
+    void messageReceived(ref string message){
         gotMessage(message);
     }
 }

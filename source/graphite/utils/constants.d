@@ -1,8 +1,10 @@
 module graphite.utils.constants;
 
 import core.stdc.stdint;
-import std.stdio;
 
+import std.exception;
+import std.stdio;
+import std.string;
 
 /// version of graphite
 immutable graphiteVersion = [0, 0, 0];
@@ -120,7 +122,7 @@ alias TESSindex IndexType;
 
 void EXIT_APP(int status, string file = __FILE__, size_t line = __LINE__)
 {
-    enforceEx!Throwable(0, new Throwable(format("Application was terminated with %s at %s(%s)", status, file, line), filen, line));
+    enforceEx!Throwable(0, format("Application was terminated with %s at %s(%s)", status, file, line), file, line);
 }
 
 

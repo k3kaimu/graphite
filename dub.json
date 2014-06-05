@@ -2,7 +2,7 @@
 	"name": "graphite",
 	"description": "Matrix, Graphic, Twitter Library for D.",
 	"authors": ["Kazuki Komatsu"],
-    "homepase": "https://github.com/k3kaimu/graphite",
+    "homepage": "https://github.com/k3kaimu/graphite",
     "license": "NYSL",
     "copyright": "Copyright © 2014, Kazuki Komatsu",
 
@@ -10,6 +10,22 @@
     "targetType": "library",
     "sourceFiles-windows-x86-dmd": ["lib/win32/glfw3dll_omf.lib"],
     "sourceFiles-windows-x86_64-dmd": ["lib/win64/glfw3dll.lib"],
+
+    "configurations":[
+        {
+            "name": "use_as_lib",
+        },
+
+        {
+            "name": "check_libdev",
+            "targetType": "executable",
+            "buildOptions": ["debugMode", "coverage", "debugInfo", "unittests", "warningsAsErrors"],
+            "dflags": ["-main"],
+       }
+    ],
+
+
 	"dependencies": {
+        "carbon" : ">=0.0.3"
 	}
 }

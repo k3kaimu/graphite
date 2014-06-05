@@ -6,6 +6,7 @@ module graphite.utils.json;
 
 import std.algorithm;
 import std.array;
+import std.complex;
 import std.conv;
 import std.exception;
 import std.json;
@@ -54,14 +55,14 @@ template JSONEnv(alias overloads)
 
 
     ///
-    JSONValue toJSONValue(T)(T t)
+    JSONValue toJSONValue(T)(auto ref T t)
     {
         static if(is(typeof(overloads.toJSONValueImpl(t)) == JSONValue))
-            return overloads.toJSONValueImpl(t);
+            return overloads.toJSONValueImpl(forward!t);
         else static if(is(typeof(t.toJSONValueImpl()) == JSONValue))
             return t.toJSONValueImpl();
         else
-            return toJSONValueImpl(t);
+            return toJSONValueImpl(forward!t);
     }
 
 
@@ -72,10 +73,7 @@ template JSONEnv(alias overloads)
         assert(result.type == JSON_TYPE.NULL);
     }
     body{
-        JSONValue dst = void;
-        dst.type = JSON_TYPE.NULL;
-
-        return dst;
+        return JSONValue(null);
     }
 
 
@@ -86,11 +84,7 @@ template JSONEnv(alias overloads)
         assert(result.type == JSON_TYPE.STRING);
     }
     body{
-        JSONValue dst = void;
-        dst.type = JSON_TYPE.STRING;
-        dst.str = value;
-
-        return dst;
+        return JSONValue(value);
     }
 
 
@@ -101,11 +95,7 @@ template JSONEnv(alias overloads)
         assert(result.type == JSON_TYPE.UINTEGER);
     }
     body{
-        JSONValue dst = void;
-        dst.type = JSON_TYPE.UINTEGER;
-        dst.uinteger = value;
-
-        return dst;
+        return JSONValue(value);
     }
 
 
@@ -116,11 +106,7 @@ template JSONEnv(alias overloads)
         assert(result.type == JSON_TYPE.INTEGER);
     }
     body{
-        JSONValue dst = void;
-        dst.type = JSON_TYPE.INTEGER;
-        dst.integer = value;
-
-        return dst;
+        return JSONValue(value);
     }
 
 
@@ -131,10 +117,7 @@ template JSONEnv(alias overloads)
         assert(result.type == JSON_TYPE.TRUE || result.type == JSON_TYPE.FALSE);
     }
     body{
-        JSONValue dst = void;
-        dst.type = value ? JSON_TYPE.TRUE : JSON_TYPE.FALSE;
-
-        return dst;
+        return JSONValue(value);
     }
 
 
@@ -145,11 +128,7 @@ template JSONEnv(alias overloads)
         assert(result.type == JSON_TYPE.FLOAT);
     }
     body{
-        JSONValue dst = void;
-        dst.type = JSON_TYPE.FLOAT;
-        dst.floating = value;
-
-        return dst;
+        return JSONValue(value);
     }
 
 
@@ -160,13 +139,11 @@ template JSONEnv(alias overloads)
         assert(result.type == JSON_TYPE.ARRAY);
     }
     body{
-        JSONValue dst = void;
-        dst.type = JSON_TYPE.ARRAY;
-        dst.array = null;
-        foreach(e; range)
-            dst.array ~= toJSONValue(e);
+        auto app = appender!(JSONValue[])();
 
-        return dst;
+        app.put(range.map!(a => toJSONValue(a)));
+
+        return JSONValue(app.data);
     }
 
 
@@ -177,18 +154,15 @@ template JSONEnv(alias overloads)
         assert(result.type == JSON_TYPE.OBJECT);
     }
     body{
-        JSONValue dst = void;
-        dst.type = JSON_TYPE.OBJECT;
-        dst.object = null;
-
+        JSONValue[string] dst;
         foreach(k, v; aa){
             static if(is(typeof(k) : string))
-                dst.object[k] = toJSONValue(v);
+                dst[k] = toJSONValue(v);
             else
-                dst.object[k.to!string()] = toJSONValue(v);
+                dst[k.to!string()] = toJSONValue(v);
         }
 
-        return dst;
+        return JSONValue(dst);
     }
 
 
@@ -327,9 +301,7 @@ if(fields.length && fields.length % 2 == 0)
 {
     JSONValue toJSONValueImpl() @property
     {
-        JSONValue jv = void;
-        jv.type = JSON_TYPE.OBJECT;
-        jv.object = null;
+        JSONValue[string] aa;
 
         foreach(i; _StaticIota!(0, fields.length))
         {
@@ -338,13 +310,13 @@ if(fields.length && fields.length % 2 == 0)
                 static assert(is(typeof(fields[i]) == string));
 
                 static if(is(typeof(mixin(fields[i+1]))))
-                    jv.object[fields[i]] = toJSONValue(mixin(fields[i+1]));
+                    aa[fields[i]] = toJSONValue(mixin(fields[i+1]));
                 else
-                    jv.object[fields[i]] = toJSONValue(fields[i+1]);
+                    aa[fields[i]] = toJSONValue(fields[i+1]);
             }
         }
 
-        return jv;
+        return JSONValue(aa);
     }
 
 
