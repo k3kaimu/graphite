@@ -8,10 +8,10 @@ import std.traits;
 import std.algorithm;
 import std.functional;
 
-import graphite.utils.noise;
-import graphite.types.point;
+//import graphite.utils.noise;
+//import graphite.types.point;
 import graphite.utils.log;
-import graphite.graphics.polyline : polyline, isInside;
+//import graphite.graphics.polyline : polyline, isInside;
 
 
 public import graphite.math.linear,
@@ -175,7 +175,7 @@ real lerpRadians(real currAngle, real target, real pct)
     return currAngle + angleDifferenceRadians(currAngle, target) * pct;
 }
 
-
+/+
 private PerlinNoise _noiseEngine;
 
 static this()
@@ -239,7 +239,7 @@ bool lineSegmentIntersection(in Point line1Start, in Point line1End, in Point li
 
     return false;
 }
-
++/
 
 T bezierPoint(T)(T a, T b, T c, T d, real t)
 {

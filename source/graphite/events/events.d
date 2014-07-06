@@ -1,14 +1,14 @@
 module graphite.events.events;
 
 import graphite.events.eventutils;
-import graphite.types.point;
+//import graphite.types.point;
 
 import std.array,
        std.format,
        std.string,
        std.variant;
 
-
+/+
 struct Mouse
 {
     enum Type { pressed, moved, released, dragged, }
@@ -241,3 +241,4 @@ CoreEvents globalEvents() @property
 
     return events;
 }
++/

@@ -1,6 +1,6 @@
 module graphite.deimos.tesselator;
 
-import graphite.utils.constants : TargetPlatform;
+//import graphite.utils.constants : TargetPlatform;
 
 /*
 ** SGI FREE SOFTWARE LICENSE B (Version 2.0, Sept. 18, 2008) 
@@ -70,9 +70,9 @@ alias float TESSreal;
 //#if TARGET_OS_IPHONE || ANDROID || __ARMEL__
 /// OS_IPHONE, __ARMEL__のD言語でのバージョン識別子は無いので適当
 //static if(isVersion!"iOS" || isVersion!"iPhone" || isVersion!"Android" || isVersion!"ARM")
-static if(TargetPlatform.isOpenGLES)
-    alias ushort TESSindex;
-else
+//static if(TargetPlatform.isOpenGLES)
+    //alias ushort TESSindex;
+//else
     alias uint TESSindex;
 
 
