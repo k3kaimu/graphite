@@ -7,19 +7,19 @@
     "copyright": "Copyright © 2014, Kazuki Komatsu",
 
     "importPaths": ["source"],
-    "targetType": "library",
     "sourceFiles-windows-x86-dmd": ["lib/win32/glfw3dll_omf.lib"],
     "sourceFiles-windows-x86_64-dmd": ["lib/win64/glfw3dll.lib"],
 
     "configurations":[
         {
             "name": "use_as_lib",
+            "targetType": "library",
         },
 
         {
             "name": "check_libdev",
             "targetType": "executable",
-            "buildOptions": ["debugMode", "coverage", "debugInfo", "unittests", "warningsAsErrors"],
+            "buildOptions": ["debugMode", "debugInfo", "unittests", "warningsAsErrors"],
             "dflags": ["-main"],
        }
     ],
