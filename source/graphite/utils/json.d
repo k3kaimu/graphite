@@ -68,6 +68,14 @@ template JSONEnv(alias overloads)
 
     ///
     JSONValue toJSONValueImpl(T)(T value)
+    if(is(T == JSONValue))
+    {
+        return value;
+    }
+
+
+    ///
+    JSONValue toJSONValueImpl(T)(T value)
     if(is(T == typeof(null)))
     out(result){
         assert(result.type == JSON_TYPE.NULL);
@@ -79,12 +87,12 @@ template JSONEnv(alias overloads)
 
     ///
     JSONValue toJSONValueImpl(T)(T value)
-    if(is(T == string))
+    if(isSomeString!T)
     out(result){
         assert(result.type == JSON_TYPE.STRING);
     }
     body{
-        return JSONValue(value);
+        return JSONValue(value.to!string);
     }
 
 
@@ -166,10 +174,51 @@ template JSONEnv(alias overloads)
     }
 
 
+    /// 
+    JSONValue toJSONValueImpl(T)(T v)
+    if(is(T == Variant))
+    {
+        if(!v.hasValue)
+            return JSONValue(null);
+        else
+        {
+            bool bSuccess;
+            JSONValue jv;
+
+            alias TT = TypeTuple!(Variant, Variant[], Variant[string], Variant[Variant],
+                                  byte, ubyte, short, ushort,
+                                  int, uint, long, ulong,
+                                  float, double, real,
+                                  string, wstring, dstring,
+                                  bool, typeof(null));
+
+            foreach(U; TT){
+                if(auto p = v.peek!U){
+                    jv = toJSONValue(*p);
+                    bSuccess =  true;
+                    break;
+                }
+            }
+
+            if(!bSuccess)
+                jv = JSONValue(v.to!string());
+
+            return jv;
+        }
+    }
+
 
     private string createFromJSONValueExceptionMsg(T)(JSONValue json)
     {
         return "cannot convert to '" ~ T.stringof ~ "' from "`"` ~ toJSON(&json) ~ `"`;
+    }
+
+
+    ///
+    void fromJSONValueImpl(T)(JSONValue json, ref T dst)
+    if(is(T == JSONValue))
+    {
+        dst = json;
     }
 
 
@@ -183,10 +232,10 @@ template JSONEnv(alias overloads)
 
     ///
     void fromJSONValueImpl(T)(JSONValue json, ref T dst)
-    if(is(T == string))
+    if(isSomeString!T)
     {
         enforceEx!JSONException(json.type == JSON_TYPE.STRING, createFromJSONValueExceptionMsg!T(json));
-        dst = json.str;
+        dst = json.str.to!T;
     }
 
 
@@ -288,6 +337,55 @@ template JSONEnv(alias overloads)
             V elem;
             fromJSONValue(v, elem);
             dst[k.to!K] = elem;
+        }
+    }
+
+
+    ///
+    void fromJSONValueImpl(T)(JSONValue json, ref T dst)
+    if(is(T == Variant))
+    {
+        static void impl(T)(JSONValue json, ref Variant dst)
+        {
+            T v;
+            fromJSONValue(json, v);
+            dst = v;
+        }
+
+
+        final switch(json.type)
+        {
+          case JSON_TYPE.STRING:
+            impl!string(json, dst);
+            return;
+
+          case JSON_TYPE.INTEGER:
+            impl!long(json, dst);
+            return;
+
+          case JSON_TYPE.UINTEGER:
+            impl!ulong(json, dst);
+            return;
+
+          case JSON_TYPE.FLOAT:
+            impl!real(json, dst);
+            return;
+
+          case JSON_TYPE.OBJECT:
+            impl!(Variant[string])(json, dst);
+            return;
+
+          case JSON_TYPE.ARRAY:
+            impl!(Variant[])(json, dst);
+            return;
+
+          case JSON_TYPE.TRUE, JSON_TYPE.FALSE:
+            impl!(bool)(json, dst);
+            return;
+
+          case JSON_TYPE.NULL:
+            impl!(typeof(null))(json, dst);
+            return;
         }
     }
 }
