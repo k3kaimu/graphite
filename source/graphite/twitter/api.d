@@ -86,7 +86,7 @@ if(N >= 1)
 
 string twEncodeComponent(string tw)
 {
-    enum re = ctRegex!`[\*"'\(\)]`;
+    enum re = ctRegex!`[\*"'\(\)!]`;
 
     static string func(T)(T m){
         char c = m.hit[0];
