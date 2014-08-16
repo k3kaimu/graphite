@@ -16,6 +16,7 @@ import std.format;
 import std.json;
 import std.path;
 import std.range;
+import std.regex;
 import std.string;
 import std.traits;
 import std.typecons;
@@ -83,6 +84,19 @@ if(N >= 1)
 }
 
 
+string twEncodeComponent(string tw)
+{
+    enum re = ctRegex!`[\*"'\(\)]`;
+
+    static string func(T)(T m){
+        char c = m.hit[0];
+        return format("%%%X", c);
+    }
+
+    return tw.encodeComponent.replaceAll!func(re);
+}
+
+
 private alias nupler2(alias fn) = nupler!(fn, 2);
 private alias toSA2 = toStaticArray!2;
 
@@ -106,7 +120,7 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
     && isInputRange!Rss && isSomeString!(typeof(params.front[0])) && isSomeString!(typeof(params.front[1])))
 {
   static if(!isURLEncoded!Rss)
-    return oauthSignature(token, method, url, params.map!(nupler2!encodeComponent).assumeURLEncoded);
+    return oauthSignature(token, method, url, params.map!(nupler2!twEncodeComponent).assumeURLEncoded);
   else
   {
     auto arr = params.map!toSA2.array();
@@ -125,10 +139,10 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
         immutable access = token.secret;
     }
 
-    immutable key = [consumer, access].map!encodeComponent().join("&");
+    immutable key = [consumer, access].map!twEncodeComponent().join("&");
     immutable msg = format(`%-(%s&%)`, [    method,
                                             url,
-                                            pairs].map!encodeComponent);
+                                            pairs].map!twEncodeComponent);
 
     return Base64.encode(hmacOf!SHA1(key, msg)[]);
   }
@@ -139,7 +153,7 @@ string oauthSignature(Tok, AAss)(in Tok token, string method, string url, in AAs
 if((is(Tok : ConsumerToken) || is(Tok : AccessToken)) && is(AAss : const(string[string])))
 {
   static if(!isURLEncoded!AAss)
-    return oauthSignature(token, token, method, url, params, params.dup.asRange.map!(nupler2!encodeComponent).assumeURLEncoded);
+    return oauthSignature(token, token, method, url, params, params.dup.asRange.map!(nupler2!twEncodeComponent).assumeURLEncoded);
   else
     return oauthSignature(token, method, url, params.dup.asRange.assumeURLEncoded);
 }
@@ -154,7 +168,7 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
     && isInputRange!Rss && isSomeString!(typeof(param.front[0])) && isSomeString!(typeof(param.front[1])))
 {
   static if(!isURLEncoded!Rss)
-    return signedCall(token, method, url, param.map!(nupler2!encodeComponent).assumeURLEncoded, dlg);
+    return signedCall(token, method, url, param.map!(nupler2!twEncodeComponent).assumeURLEncoded, dlg);
   else
   {
     immutable optParams = param.map!"cast(typeof(a[0])[2])[a[0], a[1]]".array().assumeUnique;
@@ -168,12 +182,12 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
                             "oauth_nonce":            Clock.currTime.toUnixTime.to!string,
                             "oauth_signature_method": "HMAC-SHA1",
                             "oauth_timestamp":        Clock.currTime.toUnixTime.to!string,
-                            "oauth_version":          "1.0"].dup.asRange.map!(nupler2!encodeComponent).array;
+                            "oauth_version":          "1.0"].dup.asRange.map!(nupler2!twEncodeComponent).array;
 
       static if(is(Tok : AccessToken))
-        oauthParams ~= "oauth_token".tuple(token.key).nupler2!encodeComponent.toSA2;
+        oauthParams ~= "oauth_token".tuple(token.key).nupler2!twEncodeComponent.toSA2;
 
-        oauthParams ~= "oauth_signature".tuple(oauthSignature(token, method, url, oauthParams.chain(optParams).assumeURLEncoded)).nupler2!encodeComponent.toSA2;
+        oauthParams ~= "oauth_signature".tuple(oauthSignature(token, method, url, oauthParams.chain(optParams).assumeURLEncoded)).nupler2!twEncodeComponent.toSA2;
 
         return oauthParams.assumeUnique();
     }();
@@ -198,7 +212,7 @@ Return signedCall(Tok, AAss, Return)(in Tok token,
 if((is(Tok : ConsumerToken) || is(Tok : AccessToken)) && is(AAss : const(string[string])))
 {
   static if(!isURLEncoded!AAss)
-    return signedCall(token, method, url, param.dup.asRange.map!(nupler2!encodeComponent).assumeURLEncoded, dlg);
+    return signedCall(token, method, url, param.dup.asRange.map!(nupler2!twEncodeComponent).assumeURLEncoded, dlg);
   else
     return signedCall(token, method, url, param.dup.asRange.assumeURLEncoded, dlg);
 }
@@ -328,10 +342,10 @@ if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && 
     static if(isURLEncoded!X)
         return signedStreamGet(token, url, param.dup.asRange.assumeURLEncoded);
     else
-        return signedStreamGet(token, url, param.dup.asRange.map!(nupler2!encodeComponent)().assumeURLEncoded);
+        return signedStreamGet(token, url, param.dup.asRange.map!(nupler2!twEncodeComponent)().assumeURLEncoded);
   }
   else static if(!isURLEncoded!X)
-    return signedStreamGet(token, url, param.map!(nupler2!encodeComponent).assumeURLEncoded);
+    return signedStreamGet(token, url, param.map!(nupler2!twEncodeComponent).assumeURLEncoded);
   else
   {
     _ch = new shared(AtomicDList!(immutable(ubyte)[]))();
