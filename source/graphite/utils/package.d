@@ -9,7 +9,6 @@ import std.datetime,
 
 public import /*graphite.utils.constants,*/
               graphite.utils.log,
-              graphite.utils.channel,
               graphite.utils.json
               //graphite.utils.noise,
               //graphite.utils.thread,

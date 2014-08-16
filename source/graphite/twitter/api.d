@@ -1,9 +1,7 @@
 module graphite.twitter.api;
 
 import graphite.twitter;
-
 import graphite.utils.json;
-import graphite.utils.channel;
 
 import std.algorithm;
 import std.array;
@@ -282,7 +280,7 @@ if(is(AAss : const(string[string])) || is(X == typeof(null)))
     return signedPostImage(token, url, filenames, param.dup.asRange);
 }
 
-
+/+
 private
 struct UserStreamData(T, string file, size_t line)
 {
@@ -297,7 +295,7 @@ auto userStreamData(string file, size_t line, T)(T data)
 }
 
 
-private void _spawnedFunc(string file, size_t line)(in AccessToken token, string url, immutable(string[2])[] arr, Channel!(immutable(ubyte)[]) ch)
+private void _spawnedFunc(string file, size_t line)(in AccessToken token, string url, immutable(string[2])[] arr, AtomicDList!(immutable(ubyte)[]) ch)
 {
     signedCall(token, "GET", url, arr, delegate(HTTP http, string url, string option) {
         try{
@@ -336,11 +334,13 @@ if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && 
     return signedStreamGet(token, url, param.map!(nupler2!encodeComponent).assumeURLEncoded);
   else
   {
-    auto ch = channel!(immutable(ubyte)[])();
+    _ch = new shared(AtomicDList!(immutable(ubyte)[]))();
     auto sender = spawn(&(_spawnedFunc!(file, line)), token, url, param.array().assumeUnique, ch);
 
     static struct Result
     {
+        enum char EOT = '\x04'; // terminator
+
         string front()
         {
             assert(!empty());
@@ -360,8 +360,10 @@ if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && 
 
             while(!_ch.empty && checkEmpty())
             {
-                auto str = cast(string)_ch.front;
-                _ch.popFront();
+                immutable(ubyte)[] strb = (*(_ch.popFront()));
+                string[] str = cast(string)strb;
+
+                if(str.length == 1 && str[0] == EOT)
 
                 if(!_lines.length)
                     _lines ~= str;
@@ -383,7 +385,7 @@ if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && 
 
 
       private:
-        Channel!(immutable(ubyte)[]) _ch;
+        AtomicDList!(immutable(ubyte)[]) _ch;
         string[] _lines;
     }
 
@@ -400,6 +402,7 @@ if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && 
 {
 
 }
++/
 
 
 AccessToken toToken(string s, ConsumerToken consumer)

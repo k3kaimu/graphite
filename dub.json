@@ -19,8 +19,9 @@
         },
 
         {
-            "name": "check_libdev",
+            "name": "unittest",
             "targetType": "executable",
+            "targetName": "unittest",
             "buildOptions": ["debugMode", "debugInfo", "unittests", "warningsAsErrors"],
             "dflags": ["-main"],
         }
@@ -28,6 +29,7 @@
 
 
 	"dependencies": {
-        "carbon" : ">=0.0.5"
+        "carbon" : ">=0.0.5",
+        "lock-free" : ">=0.1.1"
 	}
 }
