@@ -288,7 +288,7 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
     return signedGet(token, url, (string[string]).init);
   else
     return signedCall(token, "GET", url, param, delegate(HTTP http, string url, string option){
-        return get((0 < option.length)? url ~ "?" ~ option: url, http).assumeUnique();
+        return get((0 < option.length)? url ~ "?" ~ option: url, http).idup;
     });
 }
 
@@ -301,7 +301,7 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
     return signedPost(token, url, (string[string]).init);
   else
     return signedCall(token, "POST", url, param, delegate(HTTP http, string url, string option) {
-        return post(url, option, http).assumeUnique();
+        return post(url, option, http).idup;
     });
 }
 
@@ -339,7 +339,7 @@ if(isInputRange!Rss && isSomeString!(typeof(param.front[0])) && isSomeString!(ty
         }
         bin.put(cast(const(ubyte)[])format("--%s--\r\n", boundary));
 
-        return post(url, bin.data, http).assumeUnique();
+        return post(url, bin.data, http).idup;
     });
   }
 }
