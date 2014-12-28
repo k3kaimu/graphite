@@ -1,3 +1,34 @@
+// Written in the D programming language.
+/*
+NYSL Version 0.9982
+
+A. This software is "Everyone'sWare". It means:
+  Anybody who has this software can use it as if he/she is
+  the author.
+
+  A-1. Freeware. No fee is required.
+  A-2. You can freely redistribute this software.
+  A-3. You can freely modify this software. And the source
+      may be used in any software with no limitation.
+  A-4. When you release a modified version to public, you
+      must publish it with your name.
+
+B. The author is not responsible for any kind of damages or loss
+  while using or misusing this software, which is distributed
+  "AS IS". No warranty of any kind is expressed or implied.
+  You use AT YOUR OWN RISK.
+
+C. Copyrighted to Kazuki KOMATSU
+
+D. Above three clauses are applied both to source and binary
+  form of this software.
+*/
+
+/**
+このモジュールでは、Twitter-APIを叩きます。
+
+Thanks: http://qiita.com/woxtu/items/9656d426f424286c6571
+*/
 module graphite.twitter.api;
 
 import graphite.twitter;
@@ -149,10 +180,10 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
     && isInputRange!Rss && isSomeString!(typeof(params.front[0])) && isSomeString!(typeof(params.front[1])))
 {
   static if(!isURLEncoded!Rss)
-    return oauthSignature(token, method, url, params.map!(nupler2!twEncodeComponent).assumeURLEncoded);
+    return oauthSignature(token, method, url, params.map!(a => nupler2!twEncodeComponent(a)).assumeURLEncoded);
   else
   {
-    auto arr = params.map!toSA2.array();
+    auto arr = params.map!(a => toSA2(a)).array();
     auto idx = new typeof(arr.front)*[arr.length];
     arr.makeIndex!"a[0] < b[0]"(idx);
     auto pairs = idx.map!`(*a)[0] ~ '=' ~ (*a)[1]`.join("&");
@@ -168,10 +199,10 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
         immutable access = token.secret;
     }
 
-    immutable key = [consumer, access].map!twEncodeComponent().join("&");
+    immutable key = [consumer, access].map!(a => twEncodeComponent(a)) ().join("&");
     immutable msg = format(`%-(%s&%)`, [    method,
                                             url,
-                                            pairs].map!twEncodeComponent);
+                                            pairs].map!(a => twEncodeComponent(a)));
 
     return Base64.encode(hmacOf!SHA1(key, msg)[]);
   }
@@ -184,7 +215,7 @@ string oauthSignature(Tok, AAss)(in Tok token, string method, string url, in AAs
 if((is(Tok : ConsumerToken) || is(Tok : AccessToken)) && is(AAss : const(string[string])))
 {
   static if(!isURLEncoded!AAss)
-    return oauthSignature(token, token, method, url, params, params.dup.asRange.map!(nupler2!twEncodeComponent).assumeURLEncoded);
+    return oauthSignature(token, token, method, url, params, params.dup.asRange.map!(a => nupler2!twEncodeComponent(a)).assumeURLEncoded);
   else
     return oauthSignature(token, method, url, params.dup.asRange.assumeURLEncoded);
 }
@@ -199,7 +230,7 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
     && isInputRange!Rss && isSomeString!(typeof(param.front[0])) && isSomeString!(typeof(param.front[1])))
 {
   static if(!isURLEncoded!Rss)
-    return signedCall(token, method, url, param.map!(nupler2!twEncodeComponent).assumeURLEncoded, dlg);
+    return signedCall(token, method, url, param.map!(a => nupler2!twEncodeComponent(a)).assumeURLEncoded, dlg);
   else
   {
     immutable optParams = param.map!"cast(typeof(a[0])[2])[a[0], a[1]]".array().assumeUnique;
@@ -213,7 +244,7 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
                             "oauth_nonce":            Clock.currTime.toUnixTime.to!string,
                             "oauth_signature_method": "HMAC-SHA1",
                             "oauth_timestamp":        Clock.currTime.toUnixTime.to!string,
-                            "oauth_version":          "1.0"].dup.asRange.map!(nupler2!twEncodeComponent).array;
+                            "oauth_version":          "1.0"].dup.asRange.map!(a => nupler2!twEncodeComponent(a)).array;
 
       static if(is(Tok : AccessToken))
         oauthParams ~= "oauth_token".tuple(token.key).nupler2!twEncodeComponent.toSA2;
@@ -243,7 +274,7 @@ Return signedCall(Tok, AAss, Return)(in Tok token,
 if((is(Tok : ConsumerToken) || is(Tok : AccessToken)) && is(AAss : const(string[string])))
 {
   static if(!isURLEncoded!AAss)
-    return signedCall(token, method, url, param.dup.asRange.map!(nupler2!twEncodeComponent).assumeURLEncoded, dlg);
+    return signedCall(token, method, url, param.dup.asRange.map!(a => nupler2!twEncodeComponent(a)).assumeURLEncoded, dlg);
   else
     return signedCall(token, method, url, param.dup.asRange.assumeURLEncoded, dlg);
 }
@@ -508,21 +539,21 @@ struct Twitter
     }
 
 
-    auto get(T...)(string url, T args) const
+    auto get(X)(string url, X param) const
     {
         return signedGet(_token, url, args);
     }
 
 
-    auto post(T...)(string url, T args) const
+    auto post(X)(string url, X param) const
     {
         return signedPost(_token, url, args);
     }
 
 
-    auto postImage(T...)(string url, in string[] filenames, T... args) const
+    auto postImage(X)(string url, string endPoint, in string[] filenames, X param) const
     {
-        return signedPostImage(_token, url, filenames, args);
+        return signedPostImage(_token, url, endPoint, filenames, args);
     }
 
 
