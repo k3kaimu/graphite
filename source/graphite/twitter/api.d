@@ -24,14 +24,14 @@ import std.uri;
 import std.net.curl;
 
 
-auto asRange(V, K)(V[K] aa)
+private auto asRange(V, K)(V[K] aa)
 if(is(V : K))
 {
     return aa.byKey.zip(aa.repeat).map!"cast(typeof(a[0])[2])[a[0], a[1][a[0]]]"();
 }
 
 
-template nupler(alias fn, size_t N)
+private template nupler(alias fn, size_t N)
 if(N >= 1)
 {
     auto nupler(T)(in T arg)
@@ -63,7 +63,7 @@ if(N >= 1)
 }
 
 
-template toStaticArray(size_t N)
+private template toStaticArray(size_t N)
 if(N >= 1)
 {
     auto toStaticArray(T)(in T t)
@@ -84,7 +84,7 @@ if(N >= 1)
 }
 
 
-string twEncodeComponent(string tw)
+private string twEncodeComponent(string tw)
 {
     enum re = ctRegex!`[\*"'\(\)!]`;
 
@@ -101,18 +101,47 @@ private alias nupler2(alias fn) = nupler!(fn, 2);
 private alias toSA2 = toStaticArray!2;
 
 
+/**
+コンシューマトークンを格納するための型です。
 
+Example:
+------------------
+immutable cToken = ConsumerToken("key",
+                                 "secret");
+
+assert(cToken.key == "key");
+assert(cToken.secret == "secret");
+------------------
+*/
 struct ConsumerToken
 {
-    string key, secret;
+    string key;     /// key
+    string secret;  /// secret
 }
 
 
+/**
+コンシューマトークンとアクセストークンを格納するための型です。
+
+Example:
+------------------
+immutable consumerToken =
+    ConsumerToken("consumer_key",
+                  "consumer_secret");
+
+immutable accessToken =
+    AccessToken(consumerToken,
+        "key",
+        "secret");
+------------------
+*/
 struct AccessToken
 {
-    ConsumerToken consumer;
-    string key, secret;
+    ConsumerToken consumer; /// ConsumerToken
+    string key;             /// key
+    string secret;          /// secret
 }
+
 
 
 string oauthSignature(Tok, Rss)(in Tok token, string method, string url, Rss params)
@@ -148,6 +177,8 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
   }
 }
 
+
+private:
 
 string oauthSignature(Tok, AAss)(in Tok token, string method, string url, in AAss params)
 if((is(Tok : ConsumerToken) || is(Tok : AccessToken)) && is(AAss : const(string[string])))
@@ -244,7 +275,7 @@ if((is(Tok : ConsumerToken) || is(Tok : AccessToken))
 }
 
 
-string signedPostImage(Rss)(in AccessToken token, string url, in string[] filenames, Rss param)
+string signedPostImage(Rss)(in AccessToken token, string url, string endPoint, in string[] filenames, Rss param)
 if(isInputRange!Rss && isSomeString!(typeof(param.front[0])) && isSomeString!(typeof(param.front[1])))
 {
   static if(isURLEncoded!Rss)
@@ -270,7 +301,7 @@ if(isInputRange!Rss && isSomeString!(typeof(param.front[0])) && isSomeString!(ty
         foreach(e; filenames){
             bin.put(cast(const(ubyte)[])format("--%s\r\n", boundary));
             bin.put(cast(const(ubyte)[])format("Content-Type: application/octet-stream\r\n"));
-            bin.put(cast(const(ubyte)[])format(`Content-Disposition: form-data; name="media[]"; filename="%s"`"\r\n", e.baseName));
+            bin.put(cast(const(ubyte)[])format(`Content-Disposition: form-data; name="%s"; filename="%s"`"\r\n", endPoint, e.baseName));
             bin.put(cast(const(ubyte[]))"\r\n");
             bin.put(cast(const(ubyte)[])std.file.read(e));
             bin.put(cast(const(ubyte[]))"\r\n");
@@ -283,15 +314,15 @@ if(isInputRange!Rss && isSomeString!(typeof(param.front[0])) && isSomeString!(ty
 }
 
 
-string signedPostImage(AAss)(in AccessToken token, string url, in string[] filenames, in AAss param)
-if(is(AAss : const(string[string])) || is(X == typeof(null)))
+string signedPostImage(AAss)(in AccessToken token, string url, string endPoint, in string[] filenames, in AAss param)
+if(is(AAss : const(string[string])) || is(AAss == typeof(null)))
 {
-  static if(is(X == typeof(null)))
-    return signedPostImage(token, url, filenames, (string[string]).init.asRange);
-  else static if(isURLEncoded!AAss){
-    return signedPostImage(token, url, filenames, param.dup.asRange.map!(nupler2!decodeComponent));
-  }else
-    return signedPostImage(token, url, filenames, param.dup.asRange);
+  static if(is(AAss == typeof(null)))
+    return signedPostImage(token, url, endPoint, filenames, (string[string]).init.asRange);
+  else static if(isURLEncoded!AAss)
+    return signedPostImage(token, url, endPoint, filenames, param.dup.asRange.map!(nupler2!decodeComponent));
+  else
+    return signedPostImage(token, url, endPoint, filenames, param.dup.asRange);
 }
 
 /+
@@ -429,8 +460,48 @@ AccessToken toToken(string s, ConsumerToken consumer)
 }
 
 
+public:
+
+/**
+Twitter-APIを扱うための型です。
+
+Example:
+---------------------------------------
+import std.json;
+import std.process;
+import std.stdio;
+import std.string;
+import graphite.twitter;
+
+
+immutable consumerToken =
+    ConsumerToken("consumer_key",
+                  "consumer_secret");
+
+void main()
+{
+    // リクエストトークンの取得
+    Twitter reqTok = Twitter(Twitter.oauth.requestToken(consumerToken, null));
+    
+    // ブラウザで認証してもらう
+    browse(reqTok.callAPI!"oauth.authorizeURL"());
+
+    // pinコードを入力してもらう
+    write("please put pin-code: ");
+
+    // pinコードからアクセストークンを取得
+    Twitter accTok = Twitter(reqTok.callAPI!"oauth.accessToken"(readln().chomp()));
+
+    // ツイート
+    accTok.callAPI!"statuses.update"(["status": "Tweet by dlang-code"]);
+}
+---------------------------------------
+*/
 struct Twitter
 {
+    /**
+    各APIを叩くためのメソッドです
+    */
     auto callAPI(string name, T...)(auto ref T args) const
     {
         return mixin(`Twitter.` ~ name ~ `(_token, forward!args)`);
@@ -445,6 +516,14 @@ struct Twitter
     struct oauth
     {
       static:
+        /**
+        リクエストトークンの取得
+
+        Example:
+        -----------------------------
+        Twitter reqTok = Twitter(Twitter.oauth.requestToken(consumerToken, null));
+        -----------------------------
+        */
         AccessToken requestToken(X)(in ConsumerToken token, X param)
         {
             return signedGet(token, `https://api.twitter.com/oauth/request_token`, null)
@@ -452,12 +531,29 @@ struct Twitter
         }
 
 
+        /**
+        ブラウザで認証してもらうためのURLを取得
+
+        Example:
+        -----------------------------
+        string url = reqTok.callAPI!"oauth.authorizeURL"();
+        -----------------------------
+        */
         string authorizeURL(in AccessToken requestToken)
         {
             return `https://api.twitter.com/oauth/authorize?oauth_token=` ~ requestToken.key;
         }
 
 
+        /**
+        pinコードからアクセストークンを取得
+
+        Example:
+        -----------------------------
+        string pin = readln().chomp();  // numbers
+        Twitter tw = Twitter(reqTok.callAPI!"oauth.accessToken"(pin));
+        -----------------------------
+        */
         AccessToken accessToken(in AccessToken requestToken, string verifier)
         {
             return signedGet(requestToken, `https://api.twitter.com/oauth/access_token`, ["oauth_verifier" : verifier])
@@ -471,43 +567,7 @@ struct Twitter
       static:
         auto settings(in AccessToken token)
         {
-            alias Response =
-            JSONObjectType!(null,
-                            bool, "always_use_https",
-                            bool, "discoverable_by_email",
-                            bool, "geo_enabled",
-                            string, "language",
-                            bool, "protected_",
-                            string, "screen_name",
-                            bool, "show_all_inline_media",
-                            JSONObjectType!(null,
-                                bool, "enabled",
-                                typeof(null), "end_time",
-                                typeof(null), "start_time",
-                            ), "sleep_time",
-                            JSONObjectType!(null,
-                                string, "name",
-                                string, "tzinfo_name",
-                                int, "utc_offset",
-                            ),"time_zone",
-                            JSONObjectType!(null,
-                                string, "country",
-                                string, "countryCode",
-                                string, "name",
-                                ulong, "parentid",
-                                JSONObjectType!(null,
-                                    uint, "code",
-                                    string, "name"
-                                ), "placeType",
-                                string, "url",
-                                ulong, "woeid",
-                            )[], "trend_location",
-                            bool, "use_cookie_personalization"
-                        );
-
-            auto json = signedGet(token, `https://api.twitter.com/1.1/account/settings.json`, null);
-            auto jv = parseJSON(json);
-            return Response.fromJSONValueImpl(jv);
+            return signedGet(token, `https://api.twitter.com/1.1/account/settings.json`, null);
         }
 
 
@@ -545,15 +605,78 @@ struct Twitter
         }
 
 
+        /**
+        ツイートします。
+
+        Example:
+        ---------------------
+        import std.array, std.format, std.json;
+
+        // ツイート
+        string tweet(Twitter tw, string msg)
+        {
+            return tw.callAPI!"statuses.update"(["status" : msg]);
+        }
+
+
+        // 画像も一緒にツイート
+        string tweetWithMedia(Twitter tw, string msg, string[] imgFilePaths)
+        {
+            return tw.callAPI!"statuses.update"([
+                "status" : msg,
+                "media_ids" : format("%(%s,%)",
+                                imgFilePaths.map!(a => parseJSON(tw.callAPI!"media.upload"(a))["media_id_string"].str))
+            ]);
+        }
+        ---------------------
+        */
         auto update(X)(in AccessToken token, X param)
         {
             return signedPost(token, `https://api.twitter.com/1.1/statuses/update.json`, param);
         }
 
 
-        auto updateWithMedia(X)(in AccessToken token, string[] filenames, X param)
+        /**
+        画像1枚と一緒にツイート
+
+        Example:
+        ------------------------
+        string tweetWithMedia(Twitter tw, string msg, string imgFilePath)
         {
-            return signedPostImage(token, `https://api.twitter.com/1.1/statuses/update_with_media.json`, filenames, param);
+            return tw.callAPI!"statuses.updateWithMedia"(imgFilePath, ["status" : msg]);
+        }
+        ------------------------
+        */
+        auto updateWithMedia(X)(in AccessToken token, string filePath, X param)
+        {
+            string[1] filenames = [filePath];
+            return signedPostImage(token, `https://api.twitter.com/1.1/statuses/update_with_media.json`, "media[]", filenames, param);
+        }
+    }
+
+
+    struct media
+    {
+      static:
+        /**
+        画像をuploadします
+
+        Example:
+        -------------------------
+        import std.json;
+
+        // 画像をuploadして、画像のidを取得する
+        string uploadImage(Twitter tw, string imgFilePath)
+        {
+            return parseJSON(tw.callAPI!"media.upload"(imgFilePath))["media_id_string"].str;
+        }
+        -------------------------
+        */
+        string upload(in AccessToken token, string filePath)
+        {
+            immutable url = `https://upload.twitter.com/1.1/media/upload.json`;
+            string[1] filenames = [filePath];
+            return signedPostImage(token, url, "media", filenames, null);
         }
     }
 }
