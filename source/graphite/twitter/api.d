@@ -508,6 +508,24 @@ struct Twitter
     }
 
 
+    auto get(T...)(string url, T args) const
+    {
+        return signedGet(_token, url, args);
+    }
+
+
+    auto post(T...)(string url, T args) const
+    {
+        return signedPost(_token, url, args);
+    }
+
+
+    auto postImage(T...)(string url, in string[] filenames, T... args) const
+    {
+        return signedPostImage(_token, url, filenames, args);
+    }
+
+
   private:
     AccessToken _token;
 
