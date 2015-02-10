@@ -5,6 +5,9 @@ import std.algorithm,
        std.variant;
 
 
+public import phobosx.signal : RestrictedSignal;
+
+
 struct FiredContext
 {
     Variant sender;
@@ -15,41 +18,21 @@ struct FiredContext
 }
 
 
-/+
-struct Event(T...)
+struct EventManager(T...)
 {
-    struct EventManager
+    ref RestrictedSignal!(FiredContext, T) signalImpl() @property { return _signalImpl; }
+    private Signal!(FiredContext, T) _signalImpl;
+    alias signalImpl this;
+
+    void disable()
     {
-        mixin Signal!(FiredContext, T);
-
-        void opOpAssign(string s : "+")(slot_t dlg)
-        {
-            this.connect(dlg);
-        }
-
-
-        void opOpAssign(string s : "-")(slot_t dlg)
-        {
-            this.disconnect(dlg);
-        }
+        _disable = true;
     }
 
 
-    ref EventManager beforeApp() @property
+    void enable()
     {
-        return _slot[0];
-    }
-
-
-    ref EventManager sameTimeApp() @property
-    {
-        return _slot[1];
-    }
-
-
-    ref EventManager afterApp() @property
-    {
-        return _slot[2];
+        _disable = false;
     }
 
 
@@ -75,31 +58,47 @@ struct Event(T...)
 
 
   private:
-    EventManager[3] _slot;    // [before_app, app, after_app]
-
-
     void emit()(FiredContext ctx, auto ref T args)
     {
-        foreach(ref e; _slot)
-            e.emit(ctx, forward!args);
+        if(!_disable){
+            _signalImpl.emit(ctx, forward!args);
+        }
     }
+
+
+    bool _disable;
 }
-+/
 
-
-struct Event(T...)
+unittest
 {
-    //mixin(signal!(FiredContext, T)("beforeApp"));
-    //mixin(signal!(FiredContext, T)("sameTimeApp"));
-    //mixin(signal!(FiredContext, T)("afterApp"));
-    ref RestrictedSignal!(FiredContext, T) beforeApp() { return _beforeApp;}
-    private Signal!(FiredContext, T) _beforeApp;
+    auto event = EventManager!bool();
 
-    ref RestrictedSignal!(FiredContext, T) sameTimeApp() { return _sameTimeApp;}
-    private Signal!(FiredContext, T) _sameTimeApp;
+    bool bCalled = false;
+    event.strongConnect(delegate(FiredContext ctx, bool b){
+        assert(b);
+        assert(ctx.sender == null);
+        bCalled = true;
+    });
 
-    ref RestrictedSignal!(FiredContext, T) afterApp() { return _afterApp;}
-    private Signal!(FiredContext, T) _afterApp;
+    event.emit(true);
+    assert(bCalled);
+
+    bCalled = false;
+    event.disable();
+    event.emit(true);
+    assert(!bCalled);
+}
+
+
+struct SeqEventManager(size_t N, T...)
+{
+    ref RestrictedSignal!(FiredContext, T) opIndex(size_t i)
+    in{
+        assert(i < N);
+    }
+    body{
+        return _signals[i];
+    }
 
 
     void disable()
@@ -139,25 +138,45 @@ struct Event(T...)
     void emit()(FiredContext ctx, auto ref T args)
     {
         if(!_disable){
-            _beforeApp.emit(ctx, forward!args);
-            _sameTimeApp.emit(ctx, forward!args);
-            _afterApp.emit(ctx, forward!args);
+            foreach(i, ref e; _signals)
+                e.emit(ctx, forward!args);
         }
     }
 
 
+  private:
+    Signal!(FiredContext, T)[N] _signals;
     bool _disable;
 }
 
-
 unittest
 {
-    auto event = Event!bool();
+    SeqEventManager!(3, bool) event;
 
-    event.sameTimeApp.strongConnect(delegate(FiredContext ctx, bool b){
+    size_t cnt;
+    size_t[3] ns;
+    event[0].strongConnect(delegate(FiredContext ctx, bool b){
         assert(b);
-        assert(ctx.sender == null || ctx.sender.peek!(Event!bool));
+        assert(ctx.sender == null);
+        ns[0] = cnt;
+        ++cnt;
+    });
+
+    event[1].strongConnect(delegate(FiredContext ctx, bool b){
+        assert(b);
+        assert(ctx.sender == null);
+        ns[1] = cnt;
+        ++cnt;
+    });
+
+    event[2].strongConnect(delegate(FiredContext ctx, bool b){
+        assert(b);
+        assert(ctx.sender == null);
+        ns[2] = cnt;
+        ++cnt;
     });
 
     event.emit(true);
+    assert(cnt == 3);
+    assert(ns[] == [0, 1, 2]);
 }
