@@ -41,6 +41,7 @@ mixin defGlobalVariables!("logger", "logFile",
     return tuple(.logger!(LogFormat.readable)(file), file);
 });
 
+
 void main()
 {
     int a = 12;
@@ -562,4 +563,13 @@ struct LogFormat
         assert(jv["msg"][0].str == "FOOBAR");
         assert(323232 == (jv["msg"][1].type == JSON_TYPE.UINTEGER ? jv["msg"][1].uinteger : jv["msg"][1].integer));
     }
+}
+
+
+/**
+std.stdio.Fileに書き込むLogger
+*/
+template FileLogger(alias formattedWriter)
+{
+    alias FileLogger = typeof(.logger!formattedWriter(std.stdio.stdin));
 }
