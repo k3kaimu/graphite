@@ -34,6 +34,8 @@ module graphite.twitter.api;
 import graphite.twitter;
 import graphite.utils.json;
 
+import core.thread;
+
 import std.algorithm;
 import std.array;
 import std.base64;
@@ -53,6 +55,8 @@ import std.traits;
 import std.typecons;
 import std.uri;
 import std.net.curl;
+
+import lock_free.dlist : AtomicDList;
 
 
 private auto asRange(V, K)(V[K] aa)
@@ -125,6 +129,12 @@ private string twEncodeComponent(string tw)
     }
 
     return tw.encodeComponent.replaceAll!func(re);
+}
+
+
+private string decodeHTMLEntity(string str)
+{
+    return str.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&");
 }
 
 
@@ -273,7 +283,9 @@ Return signedCall(Tok, AAss, Return)(in Tok token,
                                 Return delegate(HTTP http, string url, string option) dlg)
 if((is(Tok : ConsumerToken) || is(Tok : AccessToken)) && is(AAss : const(string[string])))
 {
-  static if(!isURLEncoded!AAss)
+  static if(is(AAss == typeof(null)))
+    return signedCall(token, method, url, null, dlg);
+  else static if(!isURLEncoded!AAss)
     return signedCall(token, method, url, param.dup.asRange.map!(a => nupler2!twEncodeComponent(a)).assumeURLEncoded, dlg);
   else
     return signedCall(token, method, url, param.dup.asRange.assumeURLEncoded, dlg);
@@ -356,7 +368,7 @@ if(is(AAss : const(string[string])) || is(AAss == typeof(null)))
     return signedPostImage(token, url, endPoint, filenames, param.dup.asRange);
 }
 
-/+
+
 private
 struct UserStreamData(T, string file, size_t line)
 {
@@ -371,123 +383,94 @@ auto userStreamData(string file, size_t line, T)(T data)
 }
 
 
-private void _spawnedFunc(string file, size_t line)(in AccessToken token, string url, immutable(string[2])[] arr, AtomicDList!(immutable(ubyte)[]) ch)
+private void _spawnedFunc(in AccessToken token, string url, immutable(string[2])[] arr, shared(AtomicDList!string) ch)
 {
-    signedCall(token, "GET", url, arr, delegate(HTTP http, string url, string option) {
+    size_t cnt;
+    while(1){
         try{
-            scope(exit)
-                ch.hangUp();
+            if(cnt < 10)
+                core.thread.Thread.sleep(dur!"msecs"(250) * (1 << cnt));
+            else
+                break;
 
-            http.method = HTTP.Method.get;
-            http.url = url ~ ((option.length > 0) ? "?" ~ option : "");
-            http.onReceive = (ubyte[] data)
-            {
-                ch ~= data.dup.assumeUnique;
-                return data.length;
-            };
-            http.perform();
+            signedCall(token, "GET", url, arr, delegate(HTTP http, string url, string option) {
+                import std.stdio;
+                auto bugFixedHttp = BugFixedHTTP(http);
+
+                try{
+                    if(option.length > 0)
+                        url ~= "?" ~ option;
+
+                    foreach(line; byLineAsync(url, null, KeepTerminator.no, '\x0a', 10, bugFixedHttp))
+                        ch.pushBack(line.idup.decodeHTMLEntity());
+
+                }catch(Exception ex)
+                    ch.pushBack(ex.to!string);
+            });
         }
         catch(Exception ex)
-            std.stdio.writeln(ex);
-    });
+            ch.pushBack(ex.to!string);
+
+        ++cnt;
+    }
 }
 
 
-auto signedStreamGet(X, string file = __FILE__, size_t line = __LINE__)
-                           (in AccessToken token, string url, X param)
+auto signedStreamGet(X)(in AccessToken token, string url, Duration waitTime, X param)
 if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && isSomeString!(typeof(param.front[0])) && isSomeString!(typeof(param.front[1]))))
 {
   static if(is(X == typeof(null)))
-    return signedStreamGet(token, url, (string[2][]).init.assumeURLEncoded);
+    return signedStreamGet(token, url, waitTime, (string[2][]).init.assumeURLEncoded);
   else static if(is(X : const(string[string])))
   {
     static if(isURLEncoded!X)
-        return signedStreamGet(token, url, param.dup.asRange.assumeURLEncoded);
+        return signedStreamGet(token, url, waitTime, param.dup.asRange.assumeURLEncoded);
     else
-        return signedStreamGet(token, url, param.dup.asRange.map!(nupler2!twEncodeComponent)().assumeURLEncoded);
+        return signedStreamGet(token, url, waitTime, param.dup.asRange.map!(a => nupler2!twEncodeComponent(a))().assumeURLEncoded);
   }
   else static if(!isURLEncoded!X)
     return signedStreamGet(token, url, param.map!(nupler2!twEncodeComponent).assumeURLEncoded);
   else
   {
-    _ch = new shared(AtomicDList!(immutable(ubyte)[]))();
-    auto sender = spawn(&(_spawnedFunc!(file, line)), token, url, param.array().assumeUnique, ch);
+    auto ch = new shared AtomicDList!string();
+    spawn(&_spawnedFunc, token, url, param.array().assumeUnique, ch);
 
     static struct Result
     {
-        enum char EOT = '\x04'; // terminator
-
-        string front()
+        string front() @property
         {
-            assert(!empty());
-            return _lines[0].chomp();
+            if(!_cashed) popFront();
+
+            return _frontCash;
         }
 
 
-        void popFront() pure nothrow @safe
+        enum bool empty = false;
+
+
+        void popFront()
         {
-            _lines = _lines[1 .. $];
-        }
-
-
-        bool empty()
-        {
-            bool checkEmpty() { return _lines.length == 0 || (_lines.length == 1 && !_lines[0].endsWith("\r\n")); }
-
-            while(!_ch.empty && checkEmpty())
-            {
-                immutable(ubyte)[] strb = (*(_ch.popFront()));
-                string[] str = cast(string)strb;
-
-                if(str.length == 1 && str[0] == EOT)
-
-                if(!_lines.length)
-                    _lines ~= str;
-                else
-                    _lines[$-1] ~= str;
-
-                while(1){
-                    auto sp = _lines[$-1].findSplit("\r\n");
-                    if(!sp[1].empty){
-                        _lines[$-1] = _lines[$-1][0 .. sp[0].length + 2];   // + \r\n (size is +2)
-                        _lines ~= sp[2];
-                    }else
-                        break;
+            _cashed = false;
+            while(!_cashed){
+                if(auto p = _ch.popFront()){
+                    _frontCash = *p;
+                    _cashed = true;
                 }
+                else
+                    core.thread.Thread.sleep(_wt);
             }
-
-            return checkEmpty();
         }
 
 
       private:
-        AtomicDList!(immutable(ubyte)[]) _ch;
-        string[] _lines;
+        shared(AtomicDList!string) _ch;
+        string _frontCash;
+        bool _cashed;
+        Duration _wt;
     }
 
-    return Result(ch);
+    return Result(ch, null, false, waitTime);
   }
-}
-
-
-auto signedStreamPost(X)(in AccessToken token,
-                                   string method,
-                                   string url,
-                                in X param)
-if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && isSomeString!(typeof(params.front[0])) && isSomeString!(typeof(params.front[1]))))
-{
-
-}
-+/
-
-
-AccessToken toToken(string s, ConsumerToken consumer)
-{
-    string[string] result;
-    foreach (x; s.split("&").map!`a.split("=")`)
-        result[x[0]] = x[1];
-
-    return AccessToken(consumer, result["oauth_token"], result["oauth_token_secret"]);
 }
 
 
@@ -599,14 +582,23 @@ struct Twitter
 
         Example:
         -----------------------------
-        string pin = readln().chomp();  // numbers
+        string pin = readln().chomp();  // pin-code
         Twitter tw = Twitter(reqTok.callAPI!"oauth.accessToken"(pin));
         -----------------------------
         */
         AccessToken accessToken(in AccessToken requestToken, string verifier)
         {
-            return signedGet(requestToken, `https://api.twitter.com/oauth/access_token`, ["oauth_verifier" : verifier])
-                   .toToken(requestToken.consumer);
+            static AccessToken toToken(string s, ConsumerToken consumer)
+            {
+                string[string] result;
+                foreach (x; s.split("&").map!`a.split("=")`)
+                    result[x[0]] = x[1];
+
+                return AccessToken(consumer, result["oauth_token"], result["oauth_token_secret"]);
+            }
+
+            return toToken(signedGet(requestToken, `https://api.twitter.com/oauth/access_token`, ["oauth_verifier" : verifier]), 
+                           requestToken.consumer);
         }
     }
 
@@ -728,4 +720,72 @@ struct Twitter
             return signedPostImage(token, url, "media", filenames, null);
         }
     }
+
+
+    struct userstream
+    {
+      static:
+        /**
+        Userstreamに接続します
+        */
+        auto user(X)(in AccessToken token, X params)
+        {
+            return signedStreamGet(token, `https://userstream.twitter.com/1.1/user.json`, dur!"seconds"(5), params);
+        }
+    }
+
+}
+
+
+/**
+$(D_CODE std.net.HTTP.dup())のバグを直したものです。
+
+$(D_CODE HTTP.dup())では、`$( HTTP.clear(CurlOption.noprogress))`が呼ばれていますが、
+`$(D_CODE HTTP.clear)`メソッドはそのドキュメントにもある通り、ポインタを格納するオプションを初期化するためのメソッドです。
+$(D_CODE CurlOption.noprogress)は整数値のオプションなので、このコードは誤りです。
+
+またこの誤りにより、$(D_CODE HTTP.dup())が呼ばれる度に$(D_CODE CurlOption.noprogress)に$(D_CODE null)が設定され、
+結果的に$(D_CODE byLineAsync)などプログレスメーターが表示されるようになります。
+
+$(D_CODE BugFixedHTTP)では上記不具合を解決するために、強制的に$(D_CODE CurlOption.noprogress)オプションに$(D_CODE 1)を入れています。
+*/
+struct BugFixedHTTP
+{
+    static BugFixedHTTP opCall(const(char)[] url)
+    {
+        return BugFixedHTTP(HTTP(url));
+    }
+
+
+    static BugFixedHTTP opCall()
+    {
+        return BugFixedHTTP(HTTP());
+    }
+
+
+    static BugFixedHTTP opCall(HTTP http)
+    {
+        //this.http = http;
+        BugFixedHTTP bfhttp;
+        bfhttp.http = http;
+        return bfhttp;
+    }
+
+
+    BugFixedHTTP dup()
+    {
+        HTTP conn = http.dup;
+        conn.handle.set(CurlOption.noprogress, 1);
+        return BugFixedHTTP(conn);
+    }
+
+
+    string encoding() @property 
+    {
+        return http.tupleof[0].charset;
+    }
+
+
+    HTTP http;
+    alias http this;
 }
