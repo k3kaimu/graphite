@@ -432,7 +432,7 @@ alias GLFWglproc = void function();
  *
  *  @ingroup monitor
  */
-struct GLFWmonitor;
+struct GLFWmonitor{}
 
 /*! @brief Opaque window object.
  *
@@ -440,7 +440,7 @@ struct GLFWmonitor;
  *
  *  @ingroup window
  */
-struct GLFWwindow;
+struct GLFWwindow{}
 
 /*! @brief The function signature for error callbacks.
  *
