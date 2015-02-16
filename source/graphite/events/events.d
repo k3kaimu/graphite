@@ -1,6 +1,6 @@
 module graphite.events.events;
 
-import graphite.events.eventutils;
+import carbon.event;
 //import graphite.types.point;
 
 import std.array,

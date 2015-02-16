@@ -29,7 +29,7 @@
 
 
 	"dependencies": {
-        "carbon" : ">=0.0.7",
-        "lock-free" : ">=0.1.1"
+        "carbon" : ">=1.0.0",
+        "lock-free" : ">=0.1.1",
 	}
 }

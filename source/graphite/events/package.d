@@ -1,4 +1,4 @@
 module graphite.events;
 
-public import graphite.events.eventutils,
+public import carbon.event,
               graphite.events.events;
