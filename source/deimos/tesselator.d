@@ -1,4 +1,4 @@
-module graphite.deimos.tesselator;
+module deimos.tesselator;
 
 //import graphite.utils.constants : TargetPlatform;
 

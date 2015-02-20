@@ -1,5 +1,10 @@
 {
 	"dub": {
+		"cachedUpgrades": {
+			"carbon": "~master",
+			"lock-free": "0.1.1"
+		},
+		"lastUpgrade": "2015-02-20T23:19:54.0543319",
 		"lastUpdate": {
 			"carbon": "2014-08-16T11:53:14.6119423",
 			"lock-free": "2014-08-16T10:37:32.448187"
