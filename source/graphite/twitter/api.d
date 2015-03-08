@@ -441,9 +441,11 @@ private void _spawnedFunc(in AccessToken token, string url, immutable(string[2])
         void onReceive(size_t delegate(ubyte[]) callback)
         {
             http.onReceive = delegate(ubyte[] data){
+                size_t n = callback(data);
+
                 // check terminate message
-                receiveTimeout(dur!"msecs"(0), (TerminateMessage dummy){ throw new Error("error"); });
-                return callback(data);
+                receiveTimeout(dur!"msecs"(0), (TerminateMessage dummy){ n = 0; });
+                return n;
             };
         }
 
