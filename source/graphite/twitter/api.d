@@ -385,27 +385,117 @@ auto userStreamData(string file, size_t line, T)(T data)
 
 private void _spawnedFunc(in AccessToken token, string url, immutable(string[2])[] arr, shared(AtomicDList!string) ch)
 {
+    static struct TerminateMessage {}
+
+
+    /**
+    $(D_CODE std.net.HTTP.dup())のバグを直したものです。
+
+    $(D_CODE HTTP.dup())では、`$( HTTP.clear(CurlOption.noprogress))`が呼ばれていますが、
+    `$(D_CODE HTTP.clear)`メソッドはそのドキュメントにもある通り、ポインタを格納するオプションを初期化するためのメソッドです。
+    $(D_CODE CurlOption.noprogress)は整数値のオプションなので、このコードは誤りです。
+
+    またこの誤りにより、$(D_CODE HTTP.dup())が呼ばれる度に$(D_CODE CurlOption.noprogress)に$(D_CODE null)が設定され、
+    結果的に$(D_CODE byLineAsync)などプログレスメーターが表示されるようになります。
+
+    $(D_CODE BugFixedHTTP)では上記不具合を解決するために、強制的に$(D_CODE CurlOption.noprogress)オプションに$(D_CODE 1)を入れています。
+    */
+    static struct BugFixedHTTP
+    {
+        static BugFixedHTTP opCall(const(char)[] url)
+        {
+            return BugFixedHTTP(HTTP(url));
+        }
+
+
+        static BugFixedHTTP opCall()
+        {
+            return BugFixedHTTP(HTTP());
+        }
+
+
+        static BugFixedHTTP opCall(HTTP http)
+        {
+            //this.http = http;
+            BugFixedHTTP bfhttp;
+            bfhttp.http = http;
+            return bfhttp;
+        }
+
+
+        BugFixedHTTP dup()
+        {
+            HTTP conn = http.dup;
+            conn.handle.set(CurlOption.noprogress, 1);
+            return BugFixedHTTP(conn);
+        }
+
+
+        string encoding() @property 
+        {
+            return http.tupleof[0].charset;
+        }
+
+
+        @property
+        void onReceive(size_t delegate(ubyte[]) callback)
+        {
+            http.onReceive = delegate(ubyte[] data){
+                // check terminate message
+                receiveTimeout(dur!"msecs"(0), (TerminateMessage dummy){ throw new Error("error"); });
+                return callback(data);
+            };
+        }
+
+
+        HTTP http;
+        alias http this;
+    }
+
+
     size_t cnt;
     while(1){
         try{
             if(cnt < 10)
-                core.thread.Thread.sleep(dur!"msecs"(250) * (1 << cnt));
+                receiveTimeout(dur!"msecs"(250) * (1 << cnt), (bool dummy){});
             else
                 break;
 
             signedCall(token, "GET", url, arr, delegate(HTTP http, string url, string option) {
+                cnt = 0;  // init error count
+
                 import std.stdio;
                 auto bugFixedHttp = BugFixedHTTP(http);
 
-                try{
-                    if(option.length > 0)
+                if(option.length > 0)
                         url ~= "?" ~ option;
 
-                    foreach(line; byLineAsync(url, null, KeepTerminator.no, '\x0a', 10, bugFixedHttp))
-                        ch.pushBack(line.idup.decodeHTMLEntity());
+                auto lines = byLineAsync(url, null, KeepTerminator.no, '\x0a', 10, bugFixedHttp);
 
-                }catch(Exception ex)
+                void finalize() { lines.tupleof[2].send(TerminateMessage.init); }
+
+                try{
+                    while(1){
+                        if(lines.wait(dur!"msecs"(5000))){
+                            ch.pushBack(lines.front.idup);
+                            lines.popFront();
+                        }
+
+                        receiveTimeout(dur!"msecs"(0), (bool dummy){});
+                    }
+                }
+                catch(OwnerTerminated){
+                    finalize();
+                    return;
+                }
+                catch(LinkTerminated){
+                    finalize();
+                    return;
+                }
+                catch(Exception ex){
+                    finalize();
                     ch.pushBack(ex.to!string);
+                }
             });
         }
         catch(Exception ex)
@@ -433,7 +523,7 @@ if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && 
   else
   {
     auto ch = new shared AtomicDList!string();
-    spawn(&_spawnedFunc, token, url, param.array().assumeUnique, ch);
+    auto tid = spawnLinked(&_spawnedFunc, token, url, param.array().assumeUnique, ch);
 
     static struct Result
     {
@@ -462,14 +552,26 @@ if(is(X == typeof(null)) || is(X : const(string[string])) || (isInputRange!X && 
         }
 
 
+        @property
+        shared(AtomicDList!string) channel()
+        {
+            return _ch;
+        }
+
+
+        @property
+        Tid tid() { return _tid; }
+
+
       private:
+        Tid _tid;
         shared(AtomicDList!string) _ch;
         string _frontCash;
         bool _cashed;
         Duration _wt;
     }
 
-    return Result(ch, null, false, waitTime);
+    return Result(tid, ch, null, false, waitTime);
   }
 }
 
@@ -547,6 +649,15 @@ struct Twitter
   static:
     struct oauth
     {
+        private static AccessToken toToken(string s, ConsumerToken consumer)
+        {
+            string[string] result;
+            foreach (x; s.split("&").map!`a.split("=")`)
+                result[x[0]] = x[1];
+
+            return AccessToken(consumer, result["oauth_token"], result["oauth_token_secret"]);
+        }
+
       static:
         /**
         リクエストトークンの取得
@@ -558,8 +669,8 @@ struct Twitter
         */
         AccessToken requestToken(X)(in ConsumerToken token, X param)
         {
-            return signedGet(token, `https://api.twitter.com/oauth/request_token`, null)
-                   .toToken(token);
+            return toToken(signedGet(token, `https://api.twitter.com/oauth/request_token`, null)
+                   , token);
         }
 
 
@@ -588,15 +699,6 @@ struct Twitter
         */
         AccessToken accessToken(in AccessToken requestToken, string verifier)
         {
-            static AccessToken toToken(string s, ConsumerToken consumer)
-            {
-                string[string] result;
-                foreach (x; s.split("&").map!`a.split("=")`)
-                    result[x[0]] = x[1];
-
-                return AccessToken(consumer, result["oauth_token"], result["oauth_token_secret"]);
-            }
-
             return toToken(signedGet(requestToken, `https://api.twitter.com/oauth/access_token`, ["oauth_verifier" : verifier]), 
                            requestToken.consumer);
         }
@@ -734,58 +836,4 @@ struct Twitter
         }
     }
 
-}
-
-
-/**
-$(D_CODE std.net.HTTP.dup())のバグを直したものです。
-
-$(D_CODE HTTP.dup())では、`$( HTTP.clear(CurlOption.noprogress))`が呼ばれていますが、
-`$(D_CODE HTTP.clear)`メソッドはそのドキュメントにもある通り、ポインタを格納するオプションを初期化するためのメソッドです。
-$(D_CODE CurlOption.noprogress)は整数値のオプションなので、このコードは誤りです。
-
-またこの誤りにより、$(D_CODE HTTP.dup())が呼ばれる度に$(D_CODE CurlOption.noprogress)に$(D_CODE null)が設定され、
-結果的に$(D_CODE byLineAsync)などプログレスメーターが表示されるようになります。
-
-$(D_CODE BugFixedHTTP)では上記不具合を解決するために、強制的に$(D_CODE CurlOption.noprogress)オプションに$(D_CODE 1)を入れています。
-*/
-struct BugFixedHTTP
-{
-    static BugFixedHTTP opCall(const(char)[] url)
-    {
-        return BugFixedHTTP(HTTP(url));
-    }
-
-
-    static BugFixedHTTP opCall()
-    {
-        return BugFixedHTTP(HTTP());
-    }
-
-
-    static BugFixedHTTP opCall(HTTP http)
-    {
-        //this.http = http;
-        BugFixedHTTP bfhttp;
-        bfhttp.http = http;
-        return bfhttp;
-    }
-
-
-    BugFixedHTTP dup()
-    {
-        HTTP conn = http.dup;
-        conn.handle.set(CurlOption.noprogress, 1);
-        return BugFixedHTTP(conn);
-    }
-
-
-    string encoding() @property 
-    {
-        return http.tupleof[0].charset;
-    }
-
-
-    HTTP http;
-    alias http this;
 }
