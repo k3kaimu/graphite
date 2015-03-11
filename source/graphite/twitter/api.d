@@ -369,26 +369,12 @@ if(is(AAss : const(string[string])) || is(AAss == typeof(null)))
 }
 
 
-private
-struct UserStreamData(T, string file, size_t line)
-{
-    T data;
-    alias data this;
-}
-
-
-auto userStreamData(string file, size_t line, T)(T data)
-{
-    return UserStreamData!(T, file, line)(data);
-}
-
-
 private void _spawnedFunc(in AccessToken token, string url, immutable(string[2])[] arr, shared(AtomicDList!string) ch)
 {
     static struct TerminateMessage {}
 
 
-    /**
+    /*
     $(D_CODE std.net.HTTP.dup())のバグを直したものです。
 
     $(D_CODE HTTP.dup())では、`$( HTTP.clear(CurlOption.noprogress))`が呼ばれていますが、
@@ -499,6 +485,12 @@ private void _spawnedFunc(in AccessToken token, string url, immutable(string[2])
                     ch.pushBack(ex.to!string);
                 }
             });
+        }
+        catch(OwnerTerminated){
+            return;
+        }
+        catch(LinkTerminated){
+            return;
         }
         catch(Exception ex)
             ch.pushBack(ex.to!string);
