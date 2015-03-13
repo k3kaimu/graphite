@@ -472,13 +472,13 @@ private void _spawnedFunc(in AccessToken token, string url, immutable(string[2])
                         receiveTimeout(dur!"msecs"(0), (bool dummy){});
                     }
                 }
-                catch(OwnerTerminated){
+                catch(OwnerTerminated ex){
                     finalize();
-                    return;
+                    throw ex;
                 }
-                catch(LinkTerminated){
+                catch(LinkTerminated ex){
                     finalize();
-                    return;
+                    throw ex;
                 }
                 catch(Exception ex){
                     finalize();
