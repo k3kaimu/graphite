@@ -247,14 +247,14 @@ void dCalcVectorCross3_444(dReal* res, in dReal* a, in dReal* b) { _dCalcVectorC
 
 void dAddVectorCross3(dReal* res, in dReal* a, in dReal* b)
 {
-    dReal tmp[3];
+    dReal[3] tmp;
     dCalcVectorCross3(tmp.ptr, a, b);
     dAddVectors3(res, res, tmp.ptr);
 }
 
 void dSubtractVectorCross3(dReal* res, in dReal* a, in dReal* b)
 {
-    dReal tmp[3];
+    dReal[3] tmp;
     dCalcVectorCross3(tmp.ptr, a, b);
     dSubtractVectors3(res, res, tmp.ptr);
 }
@@ -294,7 +294,7 @@ void dSetCrossMatrixMinus(dReal* res, in dReal* a, uint skip)
 dReal dCalcPointsDistance3(in dReal* a, in dReal* b)
 {
     dReal res;
-    dReal tmp[3];
+    dReal[3] tmp;
     dSubtractVectors3(tmp.ptr, a, b);
     res = dCalcVectorLength3(tmp.ptr);
     return res;
@@ -383,28 +383,28 @@ void dMultiply2_333(dReal* res, in dReal* a, in dReal* b)
 
 void dMultiplyAdd0_331(dReal* res, in dReal* a, in dReal* b)
 {
-    dReal tmp[3];
+    dReal[3] tmp;
     dMultiplyHelper0_331(tmp.ptr, a, b);
     dAddVectors3(res, res, tmp.ptr);
 }
 
 void dMultiplyAdd1_331(dReal* res, in dReal* a, in dReal* b)
 {
-    dReal tmp[3];
+    dReal[3] tmp;
     dMultiplyHelper1_331(tmp.ptr, a, b);
     dAddVectors3(res, res, tmp.ptr);
 }
 
 void dMultiplyAdd0_133(dReal* res, in dReal* a, in dReal* b)
 {
-    dReal tmp[3];
+    dReal[3] tmp;
     dMultiplyHelper0_133(tmp.ptr, a, b);
     dAddVectors3(res, res, tmp.ptr);
 }
 
 void dMultiplyAdd0_333(dReal* res, in dReal* a, in dReal* b)
 {
-    dReal tmp[3];
+    dReal[3] tmp;
     dMultiplyHelper0_133(tmp.ptr, a + 0, b);
     dAddVectors3(res+ 0, res + 0, tmp.ptr);
     dMultiplyHelper0_133(tmp.ptr, a + 4, b);
@@ -415,7 +415,7 @@ void dMultiplyAdd0_333(dReal* res, in dReal* a, in dReal* b)
 
 void dMultiplyAdd1_333(dReal* res, in dReal* a, in dReal* b)
 {
-    dReal tmp[3];
+    dReal[3] tmp;
     dMultiplyHelper1_133(tmp.ptr, b, a + 0);
     dAddVectors3(res + 0, res + 0, tmp.ptr);
     dMultiplyHelper1_133(tmp.ptr, b, a + 1);
@@ -426,7 +426,7 @@ void dMultiplyAdd1_333(dReal* res, in dReal* a, in dReal* b)
 
 void dMultiplyAdd2_333(dReal* res, in dReal* a, in dReal* b)
 {
-    dReal tmp[3];
+    dReal[3] tmp;
     dMultiplyHelper0_331(tmp.ptr, b, a + 0);
     dAddVectors3(res + 0, res + 0, tmp.ptr);
     dMultiplyHelper0_331(tmp.ptr, b, a + 4);

@@ -88,7 +88,7 @@ alias sin dSin;
 alias cos dCos;
 alias fabs dFabs;
 alias atan2 dAtan2;
-alias isnan dIsNan;
+alias isNaN dIsNan;
 alias copysign dCopySign;
 alias floor dFloor;
 alias ceil dCeil;

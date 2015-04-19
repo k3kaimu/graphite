@@ -36,7 +36,7 @@ nothrow:
 struct dStopwatch
 {
     double time;
-    c_ulong cc[2];
+    c_ulong[2] cc;
 }
 
 void dStopwatchReset (dStopwatch*);
