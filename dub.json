@@ -13,7 +13,7 @@
     "sourceFiles-windows-x86_64-dmd": ["lib/win64/glfw3dll.lib"],
 
     "dependencies": {
-        "carbon" : "~>1.4.0",
+        "carbon" : "~>1.4.1",
         "lock-free" : ">=0.1.1",
     }
 }
