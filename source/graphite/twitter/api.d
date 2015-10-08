@@ -326,7 +326,7 @@ if(isInputRange!Rss && isSomeString!(typeof(param.front[0])) && isSomeString!(ty
   else{
     return signedCall(token, "POST", url, (string[string]).init, delegate(HTTP http, string url, string /*option*/){
         immutable boundary = `cce6735153bf14e47e999e68bb183e70a1fa7fc89722fc1efdf03a917340`;   // 適当な文字列
-        http.addRequestHeader("Content-Type", "mutipart/form-data; boundary=" ~ boundary);
+        http.addRequestHeader("Content-Type", "multipart/form-data; boundary=" ~ boundary);
 
         auto app = appender!(immutable(char)[])();
         foreach(e; param){
